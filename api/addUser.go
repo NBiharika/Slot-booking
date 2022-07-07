@@ -7,7 +7,7 @@ import (
 )
 
 func AddUser(ctx *gin.Context) {
-	err := start_up.UserController.Save(ctx)
+	err := start_up.UserController.AddUser(ctx)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -15,3 +15,5 @@ func AddUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "User added successfully"})
 	}
 }
+
+//

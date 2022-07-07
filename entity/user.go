@@ -9,4 +9,7 @@ type User struct {
 	Email     string    `json:"email" binding:"required,email" gorm:"type:varchar(256);unique"`
 	CreatedOn time.Time `json:"created_on" gorm:"autoUpdateTime:milli"`
 	UpdatedOn time.Time `json:"updated_on" gorm:"autoUpdateTime:nano"`
+	Password  string
 }
+
+//

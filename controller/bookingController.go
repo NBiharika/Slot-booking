@@ -13,8 +13,8 @@ import "github.com/gin-gonic/gin"
 
 type BookingController interface {
 	FindAll() []entity.Booking
-	Save(ctx *gin.Context) error
-	Cancel(ctx *gin.Context) error
+	BookSlot(ctx *gin.Context) error
+	CancelBooking(ctx *gin.Context) (string, error)
 	GetUserSlot(ctx *gin.Context) ([]entity.Slot, error)
 }
 
@@ -36,7 +36,7 @@ func (c *Controller) FindAll() []entity.Booking {
 	return c.service.FindAll()
 }
 
-func (c *Controller) Save(ctx *gin.Context) error {
+func (c *Controller) BookSlot(ctx *gin.Context) error {
 	var booking entity.Booking
 
 	jsonData, err := ioutil.ReadAll(ctx.Request.Body)
@@ -44,51 +44,70 @@ func (c *Controller) Save(ctx *gin.Context) error {
 		// Handle error
 		return err
 	}
+
 	m := make(map[string]interface{})
 	err = json.Unmarshal(jsonData, &m)
 	if err != nil {
 		return err
 	}
+
 	booking.UserID = uint64(m["user_id"].(float64))
-	//booking.SlotID = uint64(m["slot_id"].(float64))
 	startTime := m["start_time"].(string)
 	date := entity.DateForSlot()
+
 	booking.Status = "booked"
+
 	slot, err := c.slotService.Find(startTime, date)
 	if err != nil {
 		return err
 	}
-	booking.SlotID = slot.ID
 
-	c.service.Save(booking)
+	slotTimeH, _ := strconv.Atoi(slot.StartTime[:2])
+	slotTimeM, _ := strconv.Atoi(slot.StartTime[3:])
+	presentTimeH, _ := strconv.Atoi(entity.PresentTime()[:2])
+	presentTimeM, _ := strconv.Atoi(entity.PresentTime()[3:])
+
+	if slotTimeH < presentTimeH {
+		err = errors.New("crossed the booking time")
+		return err
+	}
+	if slotTimeH == presentTimeH && slotTimeM < presentTimeM {
+		err = errors.New("crossed the booking time")
+	}
+
+	booking.SlotID = slot.ID
+	c.service.BookSlot(booking)
 	return nil
 }
-func (c *Controller) Cancel(ctx *gin.Context) error {
+func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	var booking entity.Booking
 
 	jsonData, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
 		// Handle error
-		return err
+		return "", err
 	}
+
 	m := make(map[string]interface{})
 	err = json.Unmarshal(jsonData, &m)
 	if err != nil {
-		return err
+		return "", err
 	}
+
 	userID := uint64(m["user_id"].(float64))
 	booking.UserID = uint64(m["user_id"].(float64))
 	startTime := m["start_time"].(string)
 	date := entity.DateForSlot()
+
 	slot, err := c.slotService.Find(startTime, date)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	_, err = c.userService.Find(userID)
 	if err != nil {
-		err = errors.New("Not a registered user")
-		return err
+		err = errors.New("not a registered user")
+		return "", err
 	}
 
 	slotTimeH, _ := strconv.Atoi(slot.StartTime[:2])
@@ -101,12 +120,22 @@ func (c *Controller) Cancel(ctx *gin.Context) error {
 	} else if slotTimeH == presentTimeH && slotTimeM >= presentTimeM {
 		booking.Status = "cancelled"
 	} else {
-		err = errors.New("Crossed the cancellation time")
-		return err
+		err = errors.New("crossed the cancellation time")
+		return "", err
 	}
+
 	booking.SlotID = slot.ID
-	err = c.service.Cancel(booking)
-	return err
+
+	rowsAffected, err := c.service.CancelBooking(booking)
+	if err != nil {
+		return "", err
+	}
+
+	message := "slot has been cancelled"
+	if rowsAffected == 0 {
+		message = "slot has already been cancelled"
+	}
+	return message, err
 }
 
 func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
@@ -123,10 +152,12 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
 		fmt.Println("error", err.Error())
 		return nil, err
 	}
+
 	var slotIDs []uint64
 	for _, booking := range bookedSlots {
 		slotIDs = append(slotIDs, booking.SlotID)
 	}
+
 	slots, err := c.slotService.GetSlots(slotIDs)
 	if err != nil {
 		fmt.Println("error", err.Error())
@@ -134,3 +165,5 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
 	}
 	return slots, err
 }
+
+//

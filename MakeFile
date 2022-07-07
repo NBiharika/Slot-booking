@@ -1,0 +1,19 @@
+.PHONY: ;
+.SILENT: ;               # no need for @
+.ONESHELL: ;             # recipes execute in same shell
+.EXPORT_ALL_VARIABLES: ; # send all vars to shell
+
+BINARY_NAME='slot-server'
+
+build: build-go-server
+
+build-go-server:
+	rm-f $( BINARY_NAME )
+	go build -o $(BINARY_NAME) server.go
+
+start:
+	go run server.go
+
+restart:
+	ps aux | grep server | grep -v grep | tr -s ' ' | cut -d ' ' -f2 | xargs kill
+	go run server.go

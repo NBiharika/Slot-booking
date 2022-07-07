@@ -6,7 +6,7 @@ import (
 )
 
 type UserService interface {
-	Save(user entity.User) (entity.User, error)
+	AddUser(user entity.User) (entity.User, error)
 	Find(userID uint64) (entity.User, error)
 }
 
@@ -20,11 +20,13 @@ func NewUserService(repo manager.UserRepository) UserService {
 	}
 }
 
-func (service *userService) Save(user entity.User) (entity.User, error) {
-	err := service.user.Save(user)
+func (service *userService) AddUser(user entity.User) (entity.User, error) {
+	err := service.user.Create(user)
 	return user, err
 }
 
 func (service *userService) Find(userID uint64) (entity.User, error) {
 	return service.user.Find(userID)
 }
+
+//

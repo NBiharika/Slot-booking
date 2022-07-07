@@ -6,11 +6,11 @@ import (
 )
 
 type SlotService interface {
-	Save(booking entity.Slot) (entity.Slot, error)
+	AddSlot(slot []entity.Slot) ([]entity.Slot, error)
 	FindAll() []entity.Slot
 	Find(startTime, date string) (entity.Slot, error)
 	GetSlots(slotIDs []uint64) ([]entity.Slot, error)
-	//CloseDB()
+	GetCount(date string) (int64, error)
 }
 
 type service struct {
@@ -23,8 +23,8 @@ func NewSlotService(repo manager.SlotRepository) SlotService {
 	}
 }
 
-func (service *service) Save(slot entity.Slot) (entity.Slot, error) {
-	err := service.slots.Save(slot)
+func (service *service) AddSlot(slot []entity.Slot) ([]entity.Slot, error) {
+	err := service.slots.Create(slot)
 	return slot, err
 }
 
@@ -42,3 +42,9 @@ func (service *service) Find(startTime, date string) (entity.Slot, error) {
 func (service *service) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
 	return service.slots.GetSlots(slotIDs)
 }
+
+func (service *service) GetCount(date string) (int64, error) {
+	return service.slots.GetCount(date)
+}
+
+//

@@ -8,3 +8,5 @@ import (
 func GetBooking(ctx *gin.Context) {
 	ctx.JSON(200, start_up.BookingController.FindAll())
 }
+
+//

@@ -6,11 +6,12 @@ import (
 )
 
 type SlotRepository interface {
-	Save(slot entity.Slot) error
+	Create(slot []entity.Slot) error
 	CreateSlot(string) error
 	FindAll() []entity.Slot
 	Find(slot entity.Slot) (entity.Slot, error)
 	GetSlots(slotIDs []uint64) ([]entity.Slot, error)
+	GetCount(date string) (int64, error)
 }
 
 type SlotDB struct {
@@ -34,9 +35,9 @@ func (db *SlotDB) CreateSlot(startTime string) error {
 	return nil
 }
 
-func (db *SlotDB) Save(slot entity.Slot) error {
-	err := db.connection.Create(&slot).Error
+func (db *SlotDB) Create(slot []entity.Slot) error {
 	//db.connection.AutoMigrate(&entity.Slot{})
+	err := db.connection.Create(&slot).Error
 	return err
 }
 
@@ -53,6 +54,14 @@ func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 func (db *SlotDB) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
 	var slot []entity.Slot
 
-	err := db.connection.Model(&entity.Slot{}).Debug().Where("id in (?)", slotIDs).Find(&slot).Error
+	err := db.connection.Model(&entity.Slot{}).Where("id in (?)", slotIDs).Find(&slot).Error
 	return slot, err
 }
+
+func (db *SlotDB) GetCount(date string) (int64, error) {
+	var count int64
+	err := db.connection.Model(&entity.Slot{}).Where("date=?", date).Count(&count).Error
+	return count, err
+}
+
+//

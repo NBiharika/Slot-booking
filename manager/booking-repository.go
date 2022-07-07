@@ -7,9 +7,9 @@ import (
 )
 
 type BookingRepository interface {
-	Save(booking entity.Booking) error
+	Create(booking entity.Booking) error
 	FindAll() []entity.Booking
-	Cancel(booking entity.Booking) error
+	Cancel(booking entity.Booking) (int64, error)
 	GetUserBookings(userID uint64) ([]entity.Booking, error)
 }
 
@@ -23,20 +23,20 @@ func BookingRepo() BookingRepository {
 	}
 }
 
-func (db *BookingDB) Save(booking entity.Booking) error {
+func (db *BookingDB) Create(booking entity.Booking) error {
 	//db.connection.AutoMigrate(&entity.Booking{})
 	err := db.connection.Create(&booking).Error
 	return err
 }
 
-func (db *BookingDB) Cancel(booking entity.Booking) error {
-	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Update("status", booking.Status).Error
-	return err
+func (db *BookingDB) Cancel(booking entity.Booking) (int64, error) {
+	resp := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Update("status", booking.Status)
+	return resp.RowsAffected, resp.Error
 }
 
 func (db *BookingDB) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	var booked []entity.Booking
-	err := db.connection.Model(&entity.Booking{}).Debug().Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
+	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
 	fmt.Println("check:", err)
 	return booked, err
 }
@@ -46,3 +46,5 @@ func (db *BookingDB) FindAll() []entity.Booking {
 	db.connection.Find(&booked)
 	return booked
 }
+
+//

@@ -6,35 +6,36 @@ import (
 )
 
 type BookingService interface {
-	Save(booking entity.Booking) (entity.Booking, error)
+	BookSlot(booking entity.Booking) (entity.Booking, error)
 	FindAll() []entity.Booking
-	Cancel(booking entity.Booking) error
+	CancelBooking(booking entity.Booking) (int64, error)
 	GetUserBookings(userID uint64) ([]entity.Booking, error)
 }
 
-type bookingservice struct {
+type bookingService struct {
 	bookings manager.BookingRepository
 }
 
 func NewService(repo manager.BookingRepository) BookingService {
-	return &bookingservice{
+	return &bookingService{
 		bookings: repo,
 	}
 }
 
-func (service *bookingservice) Save(booking entity.Booking) (entity.Booking, error) {
-	err := service.bookings.Save(booking)
+func (service *bookingService) BookSlot(booking entity.Booking) (entity.Booking, error) {
+	err := service.bookings.Create(booking)
 	return booking, err
 }
 
-func (service *bookingservice) Cancel(booking entity.Booking) error {
-	err := service.bookings.Cancel(booking)
-	return err
+func (service *bookingService) CancelBooking(booking entity.Booking) (int64, error) {
+	return service.bookings.Cancel(booking)
 }
 
-func (service *bookingservice) FindAll() []entity.Booking {
+func (service *bookingService) FindAll() []entity.Booking {
 	return service.bookings.FindAll()
 }
-func (service *bookingservice) GetUserBookings(userID uint64) ([]entity.Booking, error) {
+func (service *bookingService) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	return service.bookings.GetUserBookings(userID)
 }
+
+//

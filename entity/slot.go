@@ -64,3 +64,5 @@ func StartTimeOfSlot(j int) string {
 	}
 	return fmt.Sprintf("%v", startTimeH) + ":" + fmt.Sprintf("%v0", startTimeM)
 }
+
+//
