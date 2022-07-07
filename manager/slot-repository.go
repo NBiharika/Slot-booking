@@ -10,7 +10,7 @@ type SlotRepository interface {
 	CreateSlot(string) error
 	FindAll() []entity.Slot
 	Find(slot entity.Slot) (entity.Slot, error)
-	GetSlots(slot entity.Slot) (entity.Slot, error)
+	GetSlots(slotIDs []uint64) ([]entity.Slot, error)
 }
 
 type SlotDB struct {
@@ -50,7 +50,9 @@ func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 	err := db.connection.Where(&slot).Find(&slot).Error
 	return slot, err
 }
-func (db *SlotDB) GetSlots(slot entity.Slot) (entity.Slot, error) {
-	err := db.connection.Where(&slot).Find(&slot).Error
+func (db *SlotDB) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
+	var slot []entity.Slot
+
+	err := db.connection.Model(&entity.Slot{}).Debug().Where("id in (?)", slotIDs).Find(&slot).Error
 	return slot, err
 }

@@ -116,18 +116,21 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
 		return []entity.Slot{}, err
 	}
 	var bookedSlots []entity.Booking
-	bookedSlots, err = c.service.GetUserSlot(UserID)
+
+	bookedSlots, err = c.service.GetUserBookings(UserID)
+
 	if err != nil {
-		fmt.Println("Error")
+		fmt.Println("error", err.Error())
+		return nil, err
 	}
-	l := len(bookedSlots)
-	var slots []entity.Slot
-	for i := 0; i < l; i++ {
-		slots[i], err = c.slotService.GetSlots(bookedSlots[i].SlotID)
-		if err != nil {
-			fmt.Println("Error")
-		}
+	var slotIDs []uint64
+	for _, booking := range bookedSlots {
+		slotIDs = append(slotIDs, booking.SlotID)
+	}
+	slots, err := c.slotService.GetSlots(slotIDs)
+	if err != nil {
+		fmt.Println("error", err.Error())
+		return slots, err
 	}
 	return slots, err
-
 }

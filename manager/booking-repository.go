@@ -10,7 +10,7 @@ type BookingRepository interface {
 	Save(booking entity.Booking) error
 	FindAll() []entity.Booking
 	Cancel(booking entity.Booking) error
-	GetUserSlot(userID uint64) ([]entity.Booking, error)
+	GetUserBookings(userID uint64) ([]entity.Booking, error)
 }
 
 type BookingDB struct {
@@ -34,9 +34,9 @@ func (db *BookingDB) Cancel(booking entity.Booking) error {
 	return err
 }
 
-func (db *BookingDB) GetUserSlot(userID uint64) ([]entity.Booking, error) {
+func (db *BookingDB) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	var booked []entity.Booking
-	err := db.connection.Model(&entity.Booking{}).Debug().Where("user_id=?", userID).Find(&booked).Error
+	err := db.connection.Model(&entity.Booking{}).Debug().Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
 	fmt.Println("check:", err)
 	return booked, err
 }

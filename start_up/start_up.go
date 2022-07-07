@@ -20,7 +20,6 @@ var (
 	BookingController controller.BookingController
 )
 
-//values are assigned
 func Initialize() {
 	manager.InitilizeConnection()
 	slotRepository = manager.SlotRepo()

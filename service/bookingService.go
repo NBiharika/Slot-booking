@@ -9,7 +9,7 @@ type BookingService interface {
 	Save(booking entity.Booking) (entity.Booking, error)
 	FindAll() []entity.Booking
 	Cancel(booking entity.Booking) error
-	GetUserSlot(userID uint64) ([]entity.Booking, error)
+	GetUserBookings(userID uint64) ([]entity.Booking, error)
 }
 
 type bookingservice struct {
@@ -35,6 +35,6 @@ func (service *bookingservice) Cancel(booking entity.Booking) error {
 func (service *bookingservice) FindAll() []entity.Booking {
 	return service.bookings.FindAll()
 }
-func (service *bookingservice) GetUserSlot(userID uint64) ([]entity.Booking, error) {
-	return service.bookings.GetUserSlot(userID)
+func (service *bookingservice) GetUserBookings(userID uint64) ([]entity.Booking, error) {
+	return service.bookings.GetUserBookings(userID)
 }

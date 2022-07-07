@@ -9,7 +9,7 @@ type SlotService interface {
 	Save(booking entity.Slot) (entity.Slot, error)
 	FindAll() []entity.Slot
 	Find(startTime, date string) (entity.Slot, error)
-	GetSlots(slotID uint64) (entity.Slot, error)
+	GetSlots(slotIDs []uint64) ([]entity.Slot, error)
 	//CloseDB()
 }
 
@@ -39,8 +39,6 @@ func (service *service) Find(startTime, date string) (entity.Slot, error) {
 	return service.slots.Find(slot)
 }
 
-func (service *service) GetSlots(slotID uint64) (entity.Slot, error) {
-	var slot entity.Slot
-	slot.ID = slotID
-	return service.slots.GetSlots(slot)
+func (service *service) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
+	return service.slots.GetSlots(slotIDs)
 }
