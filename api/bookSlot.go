@@ -14,5 +14,3 @@ func BookSlot(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"Message": "The slot is booked"})
 	}
 }
-
-//

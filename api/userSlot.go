@@ -14,5 +14,3 @@ func UserSlot(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"Slots": slots})
 	}
 }
-
-//

@@ -14,5 +14,3 @@ func GetUser(ctx *gin.Context) {
 	}
 
 }
-
-//

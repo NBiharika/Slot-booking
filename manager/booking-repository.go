@@ -46,5 +46,3 @@ func (db *BookingDB) FindAll() []entity.Booking {
 	db.connection.Find(&booked)
 	return booked
 }
-
-//

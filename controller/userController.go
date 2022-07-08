@@ -49,5 +49,3 @@ func (c *userController) AddUser(ctx *gin.Context) error {
 	_, err = c.service.AddUser(user)
 	return err
 }
-
-//

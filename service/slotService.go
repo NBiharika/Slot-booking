@@ -46,5 +46,3 @@ func (service *service) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
 func (service *service) GetCount(date string) (int64, error) {
 	return service.slots.GetCount(date)
 }
-
-//

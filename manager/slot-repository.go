@@ -63,5 +63,3 @@ func (db *SlotDB) GetCount(date string) (int64, error) {
 	err := db.connection.Model(&entity.Slot{}).Where("date=?", date).Count(&count).Error
 	return count, err
 }
-
-//

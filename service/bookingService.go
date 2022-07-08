@@ -37,5 +37,3 @@ func (service *bookingService) FindAll() []entity.Booking {
 func (service *bookingService) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	return service.bookings.GetUserBookings(userID)
 }
-
-//

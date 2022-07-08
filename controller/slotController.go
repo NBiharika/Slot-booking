@@ -50,5 +50,3 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 	}
 	return nil
 }
-
-//

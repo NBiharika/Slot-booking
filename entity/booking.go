@@ -16,5 +16,3 @@ type Booking struct {
 func (Booking) TableName() string {
 	return "bookings"
 }
-
-//

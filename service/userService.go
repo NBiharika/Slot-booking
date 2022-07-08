@@ -28,5 +28,3 @@ func (service *userService) AddUser(user entity.User) (entity.User, error) {
 func (service *userService) Find(userID uint64) (entity.User, error) {
 	return service.user.Find(userID)
 }
-
-//

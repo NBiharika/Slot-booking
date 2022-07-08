@@ -35,5 +35,3 @@ func Initialize() {
 	BookingController = controller.New(bookingService, slotService, userService)
 
 }
-
-//

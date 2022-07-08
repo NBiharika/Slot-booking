@@ -33,5 +33,3 @@ func (db *UserDB) Find(userID uint64) (entity.User, error) {
 
 	return user, err
 }
-
-//

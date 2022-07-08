@@ -11,5 +11,3 @@ type User struct {
 	UpdatedOn time.Time `json:"updated_on" gorm:"autoUpdateTime:nano"`
 	Password  string
 }
-
-//

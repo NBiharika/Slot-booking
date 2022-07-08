@@ -8,5 +8,3 @@ import (
 func GetSlot(ctx *gin.Context) {
 	ctx.JSON(200, start_up.SlotController.FindAll())
 }
-
-//
