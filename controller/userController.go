@@ -11,8 +11,7 @@ import (
 
 type UserController interface {
 	GetUser(ctx *gin.Context) (entity.User, error, int)
-	AddUser(ctx *gin.Context) error
-	RegisterUser(ctx *gin.Context) (entity.User, error, int)
+	AddUser(ctx *gin.Context) (error, int)
 }
 
 type userController struct {
@@ -40,27 +39,20 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	return user, err, http.StatusOK
 }
 
-func (c *userController) AddUser(ctx *gin.Context) error {
-	var user entity.User
-	err := ctx.BindJSON(&user)
-	if err != nil {
-		return err
-	}
-	_, err = c.service.AddUser(user)
-	return err
-}
-
-func (c *userController) RegisterUser(ctx *gin.Context) (entity.User, error, int) {
+func (c *userController) AddUser(ctx *gin.Context) (error, int) {
 	var user entity.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
-		return entity.User{}, err, http.StatusBadRequest
+		err = errors.New("enter valid details")
+		return err, http.StatusBadRequest
 	}
 	if err := user.HashPassword(user.Password); err != nil {
-		return user, err, http.StatusInternalServerError
+		err = errors.New("password could not be created")
+		return err, http.StatusInternalServerError
 	}
-	user, err := c.service.AddUser(user)
+	_, err := c.service.AddUser(user)
 	if err != nil {
-		return user, err, http.StatusInternalServerError
+		err = errors.New("use a different email id")
+		return err, http.StatusInternalServerError
 	}
-	return user, nil, http.StatusOK
+	return nil, http.StatusOK
 }

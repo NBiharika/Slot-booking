@@ -29,7 +29,7 @@ func main() {
 
 	server.GET("/api/user-slots", api.UserSlot)
 
+	server.POST("api/generate-token", api.GenerateToken)
+
 	server.Run(":8080")
 }
-
-//
