@@ -4,6 +4,7 @@ import (
 	"Slot_booking/entity"
 	"Slot_booking/service"
 	"Slot_booking/utils"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -32,12 +33,13 @@ func (c *tokenRequest) GenerateToken(context *gin.Context) (string, error, int) 
 		return "", err, http.StatusBadRequest
 	}
 
-	// check if email exists and password is correct
 	if requestErr := c.service.FindUsingEmail(user); requestErr != nil {
+		requestErr = errors.New("wrong email id or password")
 		return "", requestErr, http.StatusInternalServerError
 	}
 
 	if credentialError := user.CheckPassword(request.Password); credentialError != nil {
+		//credentialError = errors.New("")
 		return "", credentialError, http.StatusUnauthorized
 	}
 
