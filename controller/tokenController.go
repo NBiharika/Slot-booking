@@ -26,26 +26,25 @@ func NewTokenController(service service.UserService) TokenController {
 }
 
 func (c *tokenRequest) GenerateToken(context *gin.Context) (string, error, int) {
-	var request tokenRequest
-	var user entity.User
+	var userRequest tokenRequest
 
-	if err := context.ShouldBindJSON(&request); err != nil {
-		return "", err, http.StatusBadRequest
-	}
-	user.Email = request.Email
-
-	user, requestErr := c.service.FindUsingEmail(user)
-	if requestErr != nil {
-		requestErr = errors.New("wrong email id")
-		return "", requestErr, http.StatusInternalServerError
-	}
-
-	if user.Password != request.Password {
-		err := errors.New("wrong password")
+	err := context.ShouldBindJSON(&userRequest)
+	if err != nil {
 		return "", err, http.StatusBadRequest
 	}
 
-	tokenString, err := utils.GenerateJWT(user.Email)
+	user, err := c.service.FindUsingEmail(entity.User{Email: userRequest.Email})
+	if err != nil {
+		err = errors.New("wrong email id")
+		return "", err, http.StatusInternalServerError
+	}
+
+	err = user.CheckPassword(userRequest.Password)
+	if err != nil {
+		err = errors.New("invalid credentials")
+		return "", err, http.StatusUnauthorized
+	}
+	tokenString, err := utils.GenerateJWT(user)
 	if err != nil {
 		return "", err, http.StatusInternalServerError
 	}

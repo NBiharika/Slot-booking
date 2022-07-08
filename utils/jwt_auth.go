@@ -1,22 +1,25 @@
 package utils
 
 import (
-	"errors"
+	"Slot_booking/entity"
+	"fmt"
 	"github.com/golang-jwt/jwt"
+	"strings"
 	"time"
 )
 
 var jwtKey = []byte("supersecretkey")
 
 type JWTClaim struct {
-	Email string `json:"email"`
+	userID uint64
 	jwt.StandardClaims
 }
 
-func GenerateJWT(email string) (tokenString string, err error) {
+func GenerateJWT(user entity.User) (tokenString string, err error) {
+	fmt.Println("user", user)
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &JWTClaim{
-		Email: email,
+		userID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -25,9 +28,11 @@ func GenerateJWT(email string) (tokenString string, err error) {
 	return token.SignedString(jwtKey)
 }
 func ValidateToken(signedToken string) (err error) {
-	token, err := jwt.ParseWithClaims(
+	signedToken = strings.Split(signedToken, " ")[1]
+	claims := jwt.MapClaims{}
+	_, err = jwt.ParseWithClaims(
 		signedToken,
-		&JWTClaim{},
+		claims,
 		func(token *jwt.Token) (interface{}, error) {
 			return []byte(jwtKey), nil
 		},
@@ -35,12 +40,15 @@ func ValidateToken(signedToken string) (err error) {
 	if err != nil {
 		return
 	}
-	claims, ok := token.Claims.(*JWTClaim)
-	if !ok {
-		err = errors.New("couldn't parse claims")
-	}
-	if claims.ExpiresAt < time.Now().Local().Unix() {
-		err = errors.New("token expired")
-	}
+	//claims, ok := token.Claims.(*JWTClaim)
+	//if !ok {
+	//	err = errors.New("couldn't parse claims")
+	//}
+	//if claims.ExpiresAt < time.Now().Local().Unix() {
+	//	err = errors.New("token expired")
+	//}
+	fmt.Println("claims:", claims)
 	return err
 }
+
+//func Decode()
