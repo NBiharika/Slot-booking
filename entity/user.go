@@ -10,9 +10,9 @@ type User struct {
 	FirstName string    `json:"firstName" binding:"required" gorm:"type:varchar(32)"`
 	LastName  string    `json:"lastName" binding:"required" gorm:"type:varchar(32)"`
 	Email     string    `json:"email" binding:"required,email" gorm:"type:varchar(256);unique"`
+	Password  string    `json:"password"`
 	CreatedOn time.Time `json:"created_on" gorm:"autoUpdateTime:milli"`
 	UpdatedOn time.Time `json:"updated_on" gorm:"autoUpdateTime:nano"`
-	Password  string
 }
 
 func (user *User) HashPassword(password string) error {
