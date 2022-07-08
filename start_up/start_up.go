@@ -11,9 +11,10 @@ var (
 	slotService    service.SlotService
 	SlotController controller.SlotController
 
-	userRepository manager.UserRepository
-	userService    service.UserService
-	UserController controller.UserController
+	userRepository  manager.UserRepository
+	userService     service.UserService
+	UserController  controller.UserController
+	TokenController controller.TokenController
 
 	bookingRepository manager.BookingRepository
 	bookingService    service.BookingService
@@ -29,6 +30,7 @@ func Initialize() {
 	userRepository = manager.UserRepo()
 	userService = service.NewUserService(userRepository)
 	UserController = controller.NewUserController(userService)
+	TokenController = controller.NewTokenController(userService)
 
 	bookingRepository = manager.BookingRepo()
 	bookingService = service.NewService(bookingRepository)

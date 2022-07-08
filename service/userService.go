@@ -8,6 +8,7 @@ import (
 type UserService interface {
 	AddUser(user entity.User) (entity.User, error)
 	GetUser(userID uint64) (entity.User, error)
+	FindUsingEmail(user entity.User) error
 }
 
 type userService struct {
@@ -27,4 +28,7 @@ func (service *userService) AddUser(user entity.User) (entity.User, error) {
 
 func (service *userService) GetUser(userID uint64) (entity.User, error) {
 	return service.user.Find(userID)
+}
+func (service *userService) FindUsingEmail(user entity.User) error {
+	return service.user.FindUsingEmail(user)
 }

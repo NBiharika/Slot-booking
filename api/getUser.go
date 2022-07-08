@@ -12,5 +12,4 @@ func GetUser(ctx *gin.Context) {
 	} else {
 		ctx.JSON(statusCode, gin.H{"user": user})
 	}
-
 }

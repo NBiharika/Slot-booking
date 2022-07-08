@@ -3,54 +3,48 @@ package controller
 import (
 	"Slot_booking/entity"
 	"Slot_booking/service"
+	"Slot_booking/utils"
 	"github.com/gin-gonic/gin"
-	"jwt-authentication-golang/auth"
-	"jwt-authentication-golang/database"
 	"net/http"
 )
 
 type TokenController interface {
-	GenerateToken(context *gin.Context)
+	GenerateToken(context *gin.Context) (string, error, int)
 }
+
 type tokenRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	service  service.TokenService
+	service  service.UserService
 }
 
-func NewTokenController(service service.TokenService) TokenController {
-	return &tokenController{
+func NewTokenController(service service.UserService) TokenController {
+	return &tokenRequest{
 		service: service,
 	}
 }
 
-func (service *service.TokenService) GenerateToken(context *gin.Context) {
+func (c *tokenRequest) GenerateToken(context *gin.Context) (string, error, int) {
 	var request tokenRequest
 	var user entity.User
+
 	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		context.Abort()
-		return
-	}
-	// check if email exists and password is correct
-	record := database.dbClient.Where("email = ?", request.Email).First(&user)
-	if record.Error != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
-		context.Abort()
-		return
+		return "", err, http.StatusBadRequest
 	}
 
-	credentialError := user.CheckPassword(request.Password)
-	if credentialError != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
-		context.Abort()
-		return
+	// check if email exists and password is correct
+	if requestErr := c.service.FindUsingEmail(user); requestErr != nil {
+		return "", requestErr, http.StatusInternalServerError
 	}
-	tokenString, err := auth.GenerateJWT(user.Email)
+
+	if credentialError := user.CheckPassword(request.Password); credentialError != nil {
+		return "", credentialError, http.StatusUnauthorized
+	}
+
+	tokenString, err := utils.GenerateJWT(user.Email)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		context.Abort()
-		return
+		return "", err, http.StatusInternalServerError
 	}
 	context.JSON(http.StatusOK, gin.H{"token": tokenString})
+	return tokenString, nil, http.StatusOK
 }
