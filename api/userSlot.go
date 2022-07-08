@@ -11,6 +11,6 @@ func UserSlot(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"Slots": slots})
+		ctx.JSON(http.StatusOK, gin.H{"slots": slots})
 	}
 }

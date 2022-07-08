@@ -21,7 +21,7 @@ var (
 )
 
 func Initialize() {
-	manager.InitilizeConnection()
+	manager.InitializeDB()
 	slotRepository = manager.SlotRepo()
 	slotService = service.NewSlotService(slotRepository)
 	SlotController = controller.NewSlotController(slotService)

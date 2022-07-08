@@ -6,7 +6,7 @@ import (
 )
 
 func GetUser(ctx *gin.Context) {
-	user, err, statusCode := start_up.UserController.Find(ctx)
+	user, err, statusCode := start_up.UserController.GetUser(ctx)
 	if err != nil {
 		ctx.JSON(statusCode, gin.H{"error": err.Error()})
 	} else {
