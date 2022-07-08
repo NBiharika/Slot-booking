@@ -5,14 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetUser(ctx *gin.Context) {
-	user, err, statusCode := start_up.UserController.GetUser(ctx)
+func RegisterUser(ctx *gin.Context) {
+	user, err, statusCode := start_up.UserController.RegisterUser(ctx)
+
 	if err != nil {
 		ctx.JSON(statusCode, gin.H{"error": err.Error()})
 	} else {
 		ctx.JSON(statusCode, gin.H{"user": user})
 	}
-
 }
-
-//

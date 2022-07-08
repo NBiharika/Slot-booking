@@ -9,9 +9,9 @@ import (
 func UserSlot(ctx *gin.Context) {
 	slots, err := start_up.BookingController.GetUserSlot(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"Slots": slots})
+		ctx.JSON(http.StatusOK, gin.H{"slots": slots})
 	}
 }
 

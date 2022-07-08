@@ -30,7 +30,6 @@ func (db *UserDB) Find(userID uint64) (entity.User, error) {
 	var user entity.User
 	user.ID = userID
 	err := db.connection.First(&user).Error
-
 	return user, err
 }
 

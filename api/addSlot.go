@@ -11,7 +11,7 @@ func AddSlot(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"message": "Slot input is valid"})
+		ctx.JSON(http.StatusOK, gin.H{"message": "Slot added successfully"})
 	}
 }
 
