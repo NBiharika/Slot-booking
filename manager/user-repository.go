@@ -8,6 +8,7 @@ import (
 type UserRepository interface {
 	Create(user entity.User) error
 	Find(userID uint64) (entity.User, error)
+	FindUsingEmail(user entity.User) error
 }
 
 type UserDB struct {
@@ -31,6 +32,11 @@ func (db *UserDB) Find(userID uint64) (entity.User, error) {
 	user.ID = userID
 	err := db.connection.First(&user).Error
 	return user, err
+}
+
+func (db *UserDB) FindUsingEmail(user entity.User) error {
+	err := db.connection.Where("email = ?", user.Email).First(&user).Error
+	return err
 }
 
 //
