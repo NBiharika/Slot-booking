@@ -32,21 +32,22 @@ func (c *tokenRequest) GenerateToken(context *gin.Context) (string, error, int) 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		return "", err, http.StatusBadRequest
 	}
+	user.Email = request.Email
 
-	if requestErr := c.service.FindUsingEmail(user); requestErr != nil {
-		requestErr = errors.New("wrong email id or password")
+	user, requestErr := c.service.FindUsingEmail(user)
+	if requestErr != nil {
+		requestErr = errors.New("wrong email id")
 		return "", requestErr, http.StatusInternalServerError
 	}
 
-	if credentialError := user.CheckPassword(request.Password); credentialError != nil {
-		//credentialError = errors.New("")
-		return "", credentialError, http.StatusUnauthorized
+	if user.Password != request.Password {
+		err := errors.New("wrong password")
+		return "", err, http.StatusBadRequest
 	}
 
 	tokenString, err := utils.GenerateJWT(user.Email)
 	if err != nil {
 		return "", err, http.StatusInternalServerError
 	}
-	context.JSON(http.StatusOK, gin.H{"token": tokenString})
 	return tokenString, nil, http.StatusOK
 }
