@@ -11,6 +11,6 @@ func BookSlot(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"message": "Slot added successfully"})
+		ctx.JSON(http.StatusOK, gin.H{"message": "Slot booked successfully"})
 	}
 }
