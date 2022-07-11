@@ -7,10 +7,10 @@ import (
 )
 
 func BookSlot(ctx *gin.Context) {
-	err := start_up.BookingController.Save(ctx)
+	err := start_up.BookingController.BookSlot(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
-		ctx.JSON(http.StatusOK, gin.H{"Message": "The slot is booked"})
+		ctx.JSON(http.StatusOK, gin.H{"message": "Slot booked successfully"})
 	}
 }

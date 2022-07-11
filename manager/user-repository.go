@@ -6,8 +6,9 @@ import (
 )
 
 type UserRepository interface {
-	Save(user entity.User) error
+	Create(user entity.User) error
 	Find(userID uint64) (entity.User, error)
+	FindUsingEmail(user entity.User) (entity.User, error)
 }
 
 type UserDB struct {
@@ -20,7 +21,7 @@ func UserRepo() UserRepository {
 	}
 }
 
-func (db *UserDB) Save(user entity.User) error {
+func (db *UserDB) Create(user entity.User) error {
 	//db.connection.AutoMigrate(&entity.User{})
 	err := db.connection.Create(&user).Error
 	return err
@@ -30,5 +31,11 @@ func (db *UserDB) Find(userID uint64) (entity.User, error) {
 	var user entity.User
 	user.ID = userID
 	err := db.connection.First(&user).Error
+
+	return user, err
+}
+
+func (db *UserDB) FindUsingEmail(user entity.User) (entity.User, error) {
+	err := db.connection.Where("email = ?", user.Email).First(&user).Error
 	return user, err
 }

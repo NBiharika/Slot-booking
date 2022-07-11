@@ -3,14 +3,15 @@ package controller
 import (
 	"Slot_booking/entity"
 	"Slot_booking/service"
-	"fmt"
+	"Slot_booking/utils"
+	"errors"
 	"github.com/gin-gonic/gin"
-	"strconv"
+	"net/http"
 )
 
 type UserController interface {
-	Find(ctx *gin.Context) (entity.User, error)
-	Save(ctx *gin.Context) error
+	GetUser(ctx *gin.Context) (entity.User, error, int)
+	AddUser(ctx *gin.Context) (error, int)
 }
 
 type userController struct {
@@ -22,21 +23,37 @@ func NewUserController(service service.UserService) UserController {
 		service: service,
 	}
 }
-func (c *userController) Find(ctx *gin.Context) (entity.User, error) {
-	userID, err := strconv.ParseUint(ctx.Query("user_id"), 10, 64)
+
+func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+
+	user, err := c.service.GetUser(jwtData.User.ID)
 	if err != nil {
-		return entity.User{}, err
+		err = errors.New("invalid request")
+		return entity.User{}, err, http.StatusBadRequest
 	}
-	return c.service.Find(userID)
+	if err != nil {
+		return entity.User{}, err, http.StatusInternalServerError
+	}
+
+	return user, err, http.StatusOK
 }
 
-func (c *userController) Save(ctx *gin.Context) error {
+func (c *userController) AddUser(ctx *gin.Context) (error, int) {
 	var user entity.User
-	err := ctx.BindJSON(&user)
-	if err != nil {
-		return err
+	if err := ctx.ShouldBindJSON(&user); err != nil {
+		err = errors.New("enter valid details")
+		return err, http.StatusBadRequest
 	}
-	fmt.Println(user)
-	_, err = c.service.Save(user)
-	return err
+	if err := user.HashPassword(user.Password); err != nil {
+		err = errors.New("password could not be created")
+		return err, http.StatusInternalServerError
+	}
+	_, err := c.service.AddUser(user)
+	if err != nil {
+		err = errors.New("use a different email id")
+		return err, http.StatusInternalServerError
+	}
+	return nil, http.StatusOK
 }

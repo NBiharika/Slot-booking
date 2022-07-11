@@ -2,36 +2,41 @@ package main
 
 import (
 	"Slot_booking/api"
+	"Slot_booking/controller"
+	"Slot_booking/middleware"
 	"Slot_booking/start_up"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	start_up.Initialize() //
-	//manager.Createdatabase()
+	start_up.Initialize()
+
 	server := gin.Default()
-	//Health-check
+
 	server.GET("/api/health-check", api.HealthCheck)
 
-	//Slot
+	authApis := server.Group("/api/v1/", middleware.Auth())
+	{
+		authApis.GET("user", api.GetUser)
+		authApis.POST("add-booking", api.BookSlot)
+		authApis.PUT("cancel-booking", api.CancelBooking)
+		authApis.GET("user-slots", api.UserSlot)
+	}
+
 	server.GET("/api/slot", api.GetSlot)
 
 	server.POST("/api/add-slot", api.AddSlot)
 
-	//User
-	server.GET("/api/user", api.GetUser)
-
 	server.POST("/api/add-user", api.AddUser)
 
-	//Booking
 	server.GET("/api/booking", api.GetBooking)
 
-	server.POST("/api/add-booking", api.BookSlot)
+	server.POST("api/generate-token", api.GenerateToken)
 
-	server.PUT("/api/cancel-booking", api.CancelBooking)
-
-	//Get all slots for a user
-	server.GET("/api/user-slots", api.UserSlot)
+	secured := server.Group("/secured").Use(middleware.Auth())
+	{
+		secured.GET("/ping", controller.Ping)
+	}
 
 	server.Run(":8080")
 }

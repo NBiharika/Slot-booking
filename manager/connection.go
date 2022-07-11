@@ -8,7 +8,7 @@ import (
 
 var dbClient *gorm.DB
 
-func InitilizeConnection() {
+func InitializeDB() {
 	dbconn := "host=localhost user=niharika dbname=postgres port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dbconn), &gorm.Config{})
 	if err != nil {
