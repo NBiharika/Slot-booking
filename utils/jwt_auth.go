@@ -2,6 +2,7 @@ package utils
 
 import (
 	"Slot_booking/entity"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"strings"
@@ -11,15 +12,14 @@ import (
 var jwtKey = []byte("supersecretkey")
 
 type JWTClaim struct {
-	userID uint64
+	User entity.User `json:"user"`
 	jwt.StandardClaims
 }
 
 func GenerateJWT(user entity.User) (tokenString string, err error) {
-	fmt.Println("user", user)
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &JWTClaim{
-		userID: user.ID,
+		User: user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -27,28 +27,24 @@ func GenerateJWT(user entity.User) (tokenString string, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtKey)
 }
-func ValidateToken(signedToken string) (err error) {
+
+func ValidateToken(signedToken string) (claims *JWTClaim, err error) {
 	signedToken = strings.Split(signedToken, " ")[1]
-	claims := jwt.MapClaims{}
+	claims = &JWTClaim{}
 	_, err = jwt.ParseWithClaims(
 		signedToken,
 		claims,
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(jwtKey), nil
+			return jwtKey, nil
 		},
 	)
 	if err != nil {
 		return
 	}
-	//claims, ok := token.Claims.(*JWTClaim)
-	//if !ok {
-	//	err = errors.New("couldn't parse claims")
-	//}
-	//if claims.ExpiresAt < time.Now().Local().Unix() {
-	//	err = errors.New("token expired")
-	//}
-	fmt.Println("claims:", claims)
-	return err
-}
 
-//func Decode()
+	if claims.ExpiresAt < time.Now().Local().Unix() {
+		err = errors.New("token expired")
+	}
+	fmt.Println("claims:", claims)
+	return claims, err
+}

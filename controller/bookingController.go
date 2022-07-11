@@ -37,8 +37,13 @@ func (c *Controller) FindAll() []entity.Booking {
 func (c *Controller) BookSlot(ctx *gin.Context) error {
 	var booking entity.Booking
 
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+	user, err := c.userService.GetUser(jwtData.User.ID)
+	booking.UserID = user.ID
+
 	m, err := utils.ReadRequestBody(ctx)
-	booking.UserID = uint64(m["user_id"].(float64))
+	//booking.UserID = uint64(m["user_id"].(float64))
 	startTime := m["start_time"].(string)
 	date := entity.DateForSlot()
 
@@ -65,9 +70,13 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	var booking entity.Booking
 
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+	user, err := c.userService.GetUser(jwtData.User.ID)
+	booking.UserID = user.ID
+
 	m, err := utils.ReadRequestBody(ctx)
-	userID := uint64(m["user_id"].(float64))
-	booking.UserID = uint64(m["user_id"].(float64))
+
 	startTime := m["start_time"].(string)
 	date := entity.DateForSlot()
 
@@ -76,7 +85,7 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 
-	_, err = c.userService.GetUser(userID)
+	_, err = c.userService.GetUser(user.ID)
 	if err != nil {
 		err = errors.New("not a registered user")
 		return "", err
@@ -108,13 +117,16 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 }
 
 func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
-	userID, err := strconv.ParseUint(ctx.Query("user_id"), 10, 64)
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+
+	user, err := c.userService.GetUser(jwtData.User.ID)
 	if err != nil {
 		return []entity.Slot{}, err
 	}
 
 	var bookedSlots []entity.Booking
-	bookedSlots, err = c.service.GetUserBookings(userID)
+	bookedSlots, err = c.service.GetUserBookings(user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -130,4 +142,4 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
 	return slots, err
 }
 
-//
+//ghf

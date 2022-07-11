@@ -15,21 +15,21 @@ func main() {
 
 	server.GET("/api/health-check", api.HealthCheck)
 
+	authApis := server.Group("/api/v1/", middlewares.Auth())
+	{
+		authApis.GET("user", api.GetUser)
+		authApis.POST("add-booking", api.BookSlot)
+		authApis.PUT("cancel-booking", api.CancelBooking)
+		authApis.GET("user-slots", api.UserSlot)
+	}
+
 	server.GET("/api/slot", api.GetSlot)
 
 	server.POST("/api/add-slot", api.AddSlot)
 
-	server.GET("/api/user", api.GetUser)
-
 	server.POST("/api/add-user", api.AddUser)
 
 	server.GET("/api/booking", api.GetBooking)
-
-	server.POST("/api/add-booking", api.BookSlot)
-
-	server.PUT("/api/cancel-booking", api.CancelBooking)
-
-	server.GET("/api/user-slots", api.UserSlot)
 
 	server.POST("api/generate-token", api.GenerateToken)
 

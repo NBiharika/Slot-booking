@@ -34,6 +34,7 @@ func (service *bookingService) CancelBooking(booking entity.Booking) (int64, err
 func (service *bookingService) FindAll() []entity.Booking {
 	return service.bookings.FindAll()
 }
+
 func (service *bookingService) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	return service.bookings.GetUserBookings(userID)
 }

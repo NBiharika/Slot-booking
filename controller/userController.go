@@ -3,10 +3,10 @@ package controller
 import (
 	"Slot_booking/entity"
 	"Slot_booking/service"
+	"Slot_booking/utils"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 type UserController interface {
@@ -25,13 +25,14 @@ func NewUserController(service service.UserService) UserController {
 }
 
 func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
-	userID, err := strconv.ParseUint(ctx.Query("user_id"), 10, 64)
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+
+	user, err := c.service.GetUser(jwtData.User.ID)
 	if err != nil {
 		err = errors.New("invalid request")
 		return entity.User{}, err, http.StatusBadRequest
 	}
-
-	user, err := c.service.GetUser(userID)
 	if err != nil {
 		return entity.User{}, err, http.StatusInternalServerError
 	}
