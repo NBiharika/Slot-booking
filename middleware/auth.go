@@ -1,4 +1,4 @@
-package Middlewares
+package middleware
 
 import (
 	"Slot_booking/utils"
@@ -14,12 +14,13 @@ func Auth() gin.HandlerFunc {
 			context.Abort()
 			return
 		}
-		err := utils.ValidateToken(tokenString)
+		claims, err := utils.ValidateToken(tokenString)
 		if err != nil {
 			context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			context.Abort()
 			return
 		}
+		context.Set("user_info", claims)
 		context.Next()
 	}
 }

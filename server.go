@@ -3,7 +3,7 @@ package main
 import (
 	"Slot_booking/api"
 	"Slot_booking/controller"
-	"Slot_booking/middlewares"
+	"Slot_booking/middleware"
 	"Slot_booking/start_up"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +15,7 @@ func main() {
 
 	server.GET("/api/health-check", api.HealthCheck)
 
-	authApis := server.Group("/api/v1/", middlewares.Auth())
+	authApis := server.Group("/api/v1/", middleware.Auth())
 	{
 		authApis.GET("user", api.GetUser)
 		authApis.POST("add-booking", api.BookSlot)
@@ -33,7 +33,7 @@ func main() {
 
 	server.POST("api/generate-token", api.GenerateToken)
 
-	secured := server.Group("/secured").Use(middlewares.Auth())
+	secured := server.Group("/secured").Use(middleware.Auth())
 	{
 		secured.GET("/ping", controller.Ping)
 	}
