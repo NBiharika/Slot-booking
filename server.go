@@ -12,6 +12,8 @@ func main() {
 	start_up.Initialize()
 
 	server := gin.Default()
+	server.Static("/css", "./templates/css")
+	server.LoadHTMLGlob("templates/*.html")
 
 	server.GET("/api/health-check", api.HealthCheck)
 
@@ -37,6 +39,7 @@ func main() {
 	{
 		secured.GET("/ping", controller.Ping)
 	}
-
+	server.GET("/loginAndRegister", controller.LoginAndRegister)
+	server.POST("/view/add-login", api.AddUser)
 	server.Run(":8080")
 }

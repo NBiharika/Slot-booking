@@ -5,6 +5,7 @@ import (
 	"Slot_booking/service"
 	"Slot_booking/utils"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -25,13 +26,15 @@ func NewTokenController(service service.UserService) TokenController {
 	}
 }
 
-func (c *tokenRequest) GenerateToken(context *gin.Context) (string, error, int) {
+func (c *tokenRequest) GenerateToken(ctx *gin.Context) (string, error, int) {
 	var userRequest tokenRequest
-
-	err := context.ShouldBindJSON(&userRequest)
-	if err != nil {
-		return "", err, http.StatusBadRequest
-	}
+	fmt.Println(ctx.PostForm("email"))
+	userRequest.Email = ctx.PostForm("email")
+	userRequest.Password = ctx.PostForm("password")
+	//err := ctx.ShouldBindJSON(&userRequest)
+	//if err != nil {
+	//	return "", err, http.StatusBadRequest
+	//}
 
 	user, err := c.service.FindUsingEmail(entity.User{Email: userRequest.Email})
 	if err != nil {
