@@ -1,25 +1,25 @@
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>{{.title}}</title>
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<div class="hero">
+<div class="userLogin">
     <div class="form-box">
         <div class="button-box">
             <div id="btn"></div>
             <button type="button" class="toggle-btn" onclick="login()">Log In</button>
             <button type="button" class="toggle-btn1" onclick="register()">Register</button>
         </div>
-        <form id="login" class="input-group" action="api/generate-token" method="POST">
+        <form id="login" class="input-group">
             <label for="email">Email</label>
-            <input type="email" id="email" class="input-field" name="email" placeholder="Enter Email" required>
+            <input type="email" id="emailLogin" class="input-field" name="email" placeholder="Enter Email" required>
             <label for="password">Password</label>
-            <input type="password" id="password" class="input-field" name="password" placeholder="Enter Password" required>
+            <input type="password" id="passwordLogin" class="input-field" name="password" placeholder="Enter Password" required>
             <button type="submit" class="submit-btn">Log In</button>
             <a href="#">Forgot password?</a><br>
         </form>
-        <form id="register1" class = "input-group" onsubmit=registerFunc()>
+        <form id="register1" class = "input-group">
             <label for="first_name1">First Name</label>
             <input type="text" id="first_name1" class="input-field" name="first_name" placeholder="Enter First Name" required>
             <label for="last_name1">Last Name</label>
@@ -28,13 +28,11 @@
             <input type="email" id="email1" class="input-field" name="email" placeholder="Enter Email" required>
             <label for="password1">Password</label>
             <input type="password" id="password1" class="input-field" name="password" placeholder="Enter Password" required>
-            <input type="submit" class="submit-btn">Register</input>
-
+            <button type="submit" class="submit-btn">Register</button>
         </form>
     </div>
 </div>
 <script>
-
     let x = document.getElementById("login");
     let y = document.getElementById("register1");
     let z = document.getElementById("btn");
@@ -52,36 +50,95 @@
         z.style.left = "0"
     }
 
-    function registerFunc(){
+    const myForm = document.getElementById('register1');
 
-        let data = {
-            first_name: document.getElementById("first_name1").value,
-            last_name: document.getElementById("last_name1").value,
-            email: document.getElementById("email1").value,
-            password: document.getElementById("password1").value,
-        }
-        console.log(JSON.stringify(data))
-        console.log("first_name",data.first_name)
+    myForm.addEventListener('submit', function (e){
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
         let apiUrl = '/api/add-user';
-        fetch(apiUrl, {
-
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, *cors, same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
-            body: JSON.stringify(data)
-        }).then(response => {
-            console.log("response",response)
+        let apiUrl2 = '/api/generate-token'
+        fetch(apiUrl,{
+            method: 'POST',
+            body: formData
+        }).then(function (response){
             return response.json();
-        }).then(data => {
-            // Work with JSON data here
+        }).then(function (json){
+            console.log(json);
+        }).catch(function (error){
+            console.log(error);
+        })
+        fetch(apiUrl2,{
+            method: 'POST',
+            body: formData
+        }).then(function (response){
+            return response.json();
+        }).then(function (json){
+            console.log(json);
+        }).catch(function (error){
+            console.log(error);
+        })
+    });
 
-            console.log(data,"123");
-        }).catch(err => {
-            console.log(err)
-            // Do something for an error here
-        });
-    }
+
+    const myFormLogin = document.getElementById('login');
+
+    myFormLogin.addEventListener('submit', function (e){
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        // const searchParams = new URLSearchParams();
+        //
+        // for (const pair of formData){
+        //     searchParams.append(pair[0], pair[1]);
+        // }
+
+        let apiUrl = '/api/generate-token';
+        fetch(apiUrl,{
+            method: 'POST',
+            body: JSON.stringify(formData)
+        }).then((response)=>{
+            return response.json();
+        }).then((formData)=>{
+            console.log(FormData)
+        }).catch(function (error){
+            console.log(error);
+        })
+    });
+
+    // function registerFunc(){
+    //
+    //     const data = {
+    //         first_name: document.getElementById("first_name1"),
+    //         last_name: document.getElementById("last_name1").value,
+    //         email: document.getElementById("email1").value,
+    //         password: document.getElementById("password1").value,
+    //     }
+    //     console.log(JSON.stringify(data))
+    //     console.log("first_name",data.first_name)
+    //     let apiUrl = "/api/add-user";
+    //     fetch(apiUrl, {
+    //         method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    //         mode: 'cors', // no-cors, *cors, same-origin
+    //         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    //         credentials: 'same-origin', // include, *same-origin, omit
+    //         body: JSON.stringify(data)
+    //     }).then(response => {
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! Status: ${ response.status }`);
+    //         }
+    //         console.log("response",response)
+    //         return response.json();
+    //     }).then(data => {
+    //         // Work with JSON data here
+    //
+    //         console.log(data,"123");
+    //     }).catch(err => {
+    //         console.log(err)
+    //         // Do something for an error here
+    //     });
+    //}
 </script>
 </body>
 </html>
