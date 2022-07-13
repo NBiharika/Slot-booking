@@ -13,9 +13,9 @@
         </div>
         <form id="login" class="input-group">
             <label for="email">Email</label>
-            <input type="email" id="emailLogin" class="input-field" name="email" placeholder="Enter Email" required>
+            <input type="email" id="email" class="input-field" name="email" placeholder="Enter Email" required>
             <label for="password">Password</label>
-            <input type="password" id="passwordLogin" class="input-field" name="password" placeholder="Enter Password" required>
+            <input type="password" id="password" class="input-field" name="password" placeholder="Enter Password" required>
             <button type="submit" class="submit-btn">Log In</button>
             <a href="#">Forgot password?</a><br>
         </form>
@@ -38,7 +38,6 @@
     let z = document.getElementById("btn");
 
     function register() {
-        console.log("first")
         x.style.left = "-400px"
         y.style.left = "50px"
         z.style.left = "110px"
@@ -52,34 +51,45 @@
 
     const myForm = document.getElementById('register1');
 
-    myForm.addEventListener('submit', function (e){
+    myForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const formData = new FormData(this);
 
         let apiUrl = '/api/add-user';
         let apiUrl2 = '/api/generate-token'
-        fetch(apiUrl,{
+        let data;
+        fetch(apiUrl, {
             method: 'POST',
             body: formData
-        }).then(function (response){
-            return response.json();
-        }).then(function (json){
-            console.log(json);
-        }).catch(function (error){
-            console.log(error);
-        })
-        fetch(apiUrl2,{
-            method: 'POST',
-            body: formData
-        }).then(function (response){
-            return response.json();
-        }).then(function (json){
-            console.log(json);
-        }).catch(function (error){
-            console.log(error);
+        }).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                alert("Email ID already exists");
+                return Promise.reject(response);
+            }
+        }).then(function (formData) {
+            data = formData;
+            return fetch(apiUrl2, {
+                method: 'POST',
+                body: formData
+            });
+        }).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject(response);
+            }
+        }).then(function (tokenString) {
+            //window.localStorage.setItem("Token", toString(tokenString));
+            //window.localStorage.getItem("Token");
+            console.log(data, tokenString);
+        }).catch(function (error) {
+            console.warn(error);
         })
     });
+
 
 
     const myFormLogin = document.getElementById('login');
@@ -97,11 +107,11 @@
         let apiUrl = '/api/generate-token';
         fetch(apiUrl,{
             method: 'POST',
-            body: JSON.stringify(formData)
+            body: formData
         }).then((response)=>{
             return response.json();
         }).then((formData)=>{
-            console.log(FormData)
+            console.log(formData);
         }).catch(function (error){
             console.log(error);
         })
