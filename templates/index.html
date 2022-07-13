@@ -82,8 +82,8 @@
                 return Promise.reject(response);
             }
         }).then(function (tokenString) {
-            window.localStorage.setItem("Token", toString(tokenString));
-            window.localStorage.getItem("Token");
+            //window.localStorage.setItem("Token", toString(tokenString));
+            //window.localStorage.getItem("Token");
             console.log(data, tokenString);
         }).catch(function (error) {
             console.warn(error);
