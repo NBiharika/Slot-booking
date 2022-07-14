@@ -32,11 +32,11 @@
     height: 20px;
     width: 20px;
     transition: all 0.15s ease-out 0s;
-    background: #fff;
+    background: white;
     border: 1px solid #999;
-    color: #fff;
+    color: white;
     cursor: pointer;
-    display: inline-block;
+    display: block;
     margin-right: 0.5rem;
     outline: none;
     position: relative;
@@ -49,7 +49,7 @@
     border: 1px solid #fff;
 }
 .option-input:checked::before {
-    color: #d9486d;
+    color: yellow;
     height: 40px;
     width: 40px;
     position: absolute;
@@ -69,7 +69,6 @@
     position: relative;
     z-index: 100;
 }
-
 .option-input.radio {
     border-radius: 50%;
 }
@@ -86,17 +85,28 @@
     padding-left: 40px;
     min-height: 30px;
 }
-
 .option-input.radio:checked + .app-border {
-    background: #d9486d;
+    background: yellow;
 }
 .option-input.radio:disabled,
 .option-input.radio:disabled + .app-border {
-    cursor: not-allowed;
+    background: green;
     opacity: 0.6;
 }
 .app-label {
     position: relative;
     top: 5px;
     margin-right: 10px;
+}
+.color-input {
+    width: 85%;
+    padding: 10px 30px;
+    cursor: pointer;
+    display: block;
+    margin: 30px;
+    color: green;
+    background: linear-gradient(to right, #ff105f, #ffad06);
+    border: 0;
+    outline: none;
+    border-radius: 30px;
 }

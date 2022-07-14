@@ -15,19 +15,23 @@
             <label for="email">Email</label>
             <input type="email" id="email" class="input-field" name="email" placeholder="Enter Email" required>
             <label for="password">Password</label>
-            <input type="password" id="password" class="input-field" name="password" placeholder="Enter Password" required>
+            <input type="password" id="password" class="input-field" name="password" placeholder="Enter Password"
+                   required>
             <button type="submit" class="submit-btn">Log In</button>
             <a href="#">Forgot password?</a><br>
         </form>
-        <form id="register1" class = "input-group">
+        <form id="register1" class="input-group">
             <label for="first_name1">First Name</label>
-            <input type="text" id="first_name1" class="input-field" name="first_name" placeholder="Enter First Name" required>
+            <input type="text" id="first_name1" class="input-field" name="firstName" placeholder="Enter First Name"
+                   required>
             <label for="last_name1">Last Name</label>
-            <input type="text" id="last_name1" class="input-field" name="last_name" placeholder="Enter Last Name" required>
+            <input type="text" id="last_name1" class="input-field" name="lastName" placeholder="Enter Last Name"
+                   required>
             <label for="email1">Email</label>
             <input type="email" id="email1" class="input-field" name="email" placeholder="Enter Email" required>
             <label for="password1">Password</label>
-            <input type="password" id="password1" class="input-field" name="password" placeholder="Enter Password" required>
+            <input type="password" id="password1" class="input-field" name="password" placeholder="Enter Password"
+                   required>
             <button type="submit" class="submit-btn">Register</button>
         </form>
     </div>
@@ -50,105 +54,109 @@
     }
 
     const myForm = document.getElementById('register1');
+    let addUserURL = '/api/add-user';
+    let generateTokenURL = '/api/generate-token';
+    let slotApiURL = '/api/slot';
 
     myForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const formData = new FormData(this);
-
-        let apiUrl = '/api/add-user';
-        let apiUrl2 = '/api/generate-token'
+        let email = formData.get("email");
         let data;
-        fetch(apiUrl, {
+        fetch(addUserURL, {
             method: 'POST',
-            body: formData
+            body: JSON.stringify(Object.fromEntries(formData))
         }).then(function (response) {
             if (response.ok) {
                 return response.json();
             } else {
-                alert("Email ID already exists");
+                alert("Email already exists");
                 return Promise.reject(response);
             }
         }).then(function (json) {
             data = json;
-            return fetch(apiUrl2, {
+            fetch(generateTokenURL, {
                 method: 'POST',
-                body: formData
-            });
+                body: JSON.stringify(Object.fromEntries(formData))
+            }).then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return Promise.reject(response);
+                }
+            }).then(function (tokenJson) {
+                window.localStorage.setItem(email, tokenJson.token);
+
+            }).catch(function (error) {
+                console.warn(error);
+            })
+        }).catch(function (error) {
+            console.warn(error);
+        })
+        let token = window.localStorage.getItem(email);
+        if (token) {
+            token = "Bearer " + token;
+            fetch(slotApiURL, {
+                method: 'GET',
+                // headers: {
+                //     'Authorization': token,
+                // }
+            }).then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return Promise.reject(response);
+                }
+            }).catch(function (error) {
+                console.warn(error);
+            })
+        }
+    });
+
+    const myFormLogin = document.getElementById('login');
+
+    myFormLogin.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const email = formData.get("email");
+        fetch(generateTokenURL, {
+            method: 'POST',
+            body: JSON.stringify(Object.fromEntries(formData))
         }).then(function (response) {
             if (response.ok) {
                 return response.json();
             } else {
                 return Promise.reject(response);
             }
-        }).then(function (tokenString) {
-            //window.localStorage.setItem("Token", toString(tokenString));
-            //window.localStorage.getItem("Token");
-            console.log(data, tokenString);
+        }).then(function (tokenJson) {
+            window.localStorage.setItem(email, tokenJson.token);
+            //let tokenForLogin = window.localStorage.getItem(email);
+            window.location.href="http://localhost:8080/get-slot";
         }).catch(function (error) {
             console.warn(error);
         })
-    });
-
-
-
-    const myFormLogin = document.getElementById('login');
-
-    myFormLogin.addEventListener('submit', function (e){
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        // const searchParams = new URLSearchParams();
-        //
-        // for (const pair of formData){
-        //     searchParams.append(pair[0], pair[1]);
+        // let token = window.localStorage.getItem(email);
+        // console.log(token);
+        // if (token) {
+        //     token = "Bearer " + token;
+        //     fetch(slotApiURL, {
+        //         method: 'GET',
+        //         // headers: {
+        //         //     'Authorization': token,
+        //         // }
+        //     }).then(function (response) {
+        //         if (response.ok) {
+        //             return response.json();
+        //         } else {
+        //             return Promise.reject(response);
+        //         }
+        //     }).catch(function (error) {
+        //         console.warn(error);
+        //     })
         // }
-
-        let apiUrl = '/api/generate-token';
-        fetch(apiUrl,{
-            method: 'POST',
-            body: formData
-        }).then((response)=>{
-            return response.json();
-        }).then((formData)=>{
-            console.log(formData);
-        }).catch(function (error){
-            console.log(error);
-        })
     });
-
-    // function registerFunc(){
-    //
-    //     const data = {
-    //         first_name: document.getElementById("first_name1"),
-    //         last_name: document.getElementById("last_name1").value,
-    //         email: document.getElementById("email1").value,
-    //         password: document.getElementById("password1").value,
-    //     }
-    //     console.log(JSON.stringify(data))
-    //     console.log("first_name",data.first_name)
-    //     let apiUrl = "/api/add-user";
-    //     fetch(apiUrl, {
-    //         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    //         mode: 'cors', // no-cors, *cors, same-origin
-    //         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    //         credentials: 'same-origin', // include, *same-origin, omit
-    //         body: JSON.stringify(data)
-    //     }).then(response => {
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! Status: ${ response.status }`);
-    //         }
-    //         console.log("response",response)
-    //         return response.json();
-    //     }).then(data => {
-    //         // Work with JSON data here
-    //
-    //         console.log(data,"123");
-    //     }).catch(err => {
-    //         console.log(err)
-    //         // Do something for an error here
-    //     });
-    //}
 </script>
 </body>
 </html>
