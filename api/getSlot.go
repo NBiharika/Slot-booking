@@ -10,15 +10,12 @@ import (
 )
 
 func GetSlot(ctx *gin.Context) {
-	//slots := start_up.SlotController.FindAll()
-	//userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
 	finalUserSlots := FinalUserSlots(ctx)
 
 	ctx.HTML(http.StatusOK, "slot.html", gin.H{
 		"title": "slots",
 		"slots": finalUserSlots,
 	})
-	//ctx.HTML(http.StatusOK, "slot.html", gin.H{"slots": start_up.SlotController.FindAll()})
 	//ctx.JSON(http.StatusOK, start_up.SlotController.FindAll())
 }
 

@@ -41,7 +41,6 @@ func main() {
 		secured.GET("/ping", controller.Ping)
 	}
 	server.GET("/", controller.LoginAndRegister)
-	//server.GET("/get-user-slots", api.UserSlot)
-	server.GET("/api/final-slots", api.GetSlot)
+
 	server.Run(":8080")
 }

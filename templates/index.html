@@ -133,7 +133,7 @@
         }).then(function (tokenJson) {
             window.localStorage.setItem(email, tokenJson.token);
             let tokenForLogin = window.localStorage.getItem(email);
-            //http.request(`http://localhost:8080/api/v1/get-slot?key=value`, {'Authorization': "Bearer" + tokenForLogin})
+            //http.request(`http://localhost:8080/api/v1/get-slot?key=value`, {'Authorization': "Bearer" + tokenForLogin}).on('response', (response) => response.pipe(res))
             window.location.href="http://localhost:8080/api/v1/get-slot",{'Authorization': "Bearer" + tokenForLogin};
         }).catch(function (error) {
             console.warn(error);
