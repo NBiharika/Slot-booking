@@ -13,6 +13,6 @@ func GenerateToken(ctx *gin.Context) {
 	} else {
 		//ctx.HTML(statusCode, "index.html", gin.H{"token": tokenString})
 		ctx.JSON(statusCode, gin.H{"token": tokenString})
-		//ctx.Redirect(http.StatusMovedPermanently, "/get-slot")
+		//ctx.Redirect(http.StatusMovedPermanently, "/api/v1/get-slot")
 	}
 }

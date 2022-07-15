@@ -18,7 +18,6 @@
             <input type="password" id="password" class="input-field" name="password" placeholder="Enter Password"
                    required>
             <button type="submit" class="submit-btn">Log In</button>
-            <a href="#">Forgot password?</a><br>
         </form>
         <form id="register1" class="input-group">
             <label for="first_name1">First Name</label>
@@ -121,6 +120,7 @@
 
         const formData = new FormData(this);
         const email = formData.get("email");
+
         fetch(generateTokenURL, {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(formData))
@@ -132,20 +132,23 @@
             }
         }).then(function (tokenJson) {
             window.localStorage.setItem(email, tokenJson.token);
-            //let tokenForLogin = window.localStorage.getItem(email);
-            window.location.href="http://localhost:8080/get-slot";
+            let tokenForLogin = window.localStorage.getItem(email);
+            //http.request(`http://localhost:8080/api/v1/get-slot?key=value`, {'Authorization': "Bearer" + tokenForLogin})
+            window.location.href="http://localhost:8080/api/v1/get-slot",{'Authorization': "Bearer" + tokenForLogin};
         }).catch(function (error) {
             console.warn(error);
         })
+
+
         // let token = window.localStorage.getItem(email);
         // console.log(token);
         // if (token) {
         //     token = "Bearer " + token;
         //     fetch(slotApiURL, {
         //         method: 'GET',
-        //         // headers: {
-        //         //     'Authorization': token,
-        //         // }
+        //         headers: {
+        //              'Authorization': token,
+        //         }
         //     }).then(function (response) {
         //         if (response.ok) {
         //             return response.json();

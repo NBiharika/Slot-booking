@@ -23,9 +23,9 @@ func main() {
 		authApis.POST("add-booking", api.BookSlot)
 		authApis.PUT("cancel-booking", api.CancelBooking)
 		authApis.GET("user-slots", api.UserSlot)
-
+		server.GET("/get-slot", api.GetSlot)
 	}
-	server.GET("/get-slot", api.GetSlot)
+
 	//server.GET("/api/slot", api.GetSlot)
 
 	server.POST("/api/add-slot", api.AddSlot)
@@ -42,6 +42,6 @@ func main() {
 	}
 	server.GET("/", controller.LoginAndRegister)
 	//server.GET("/get-user-slots", api.UserSlot)
-	//server.POST("/view/add-login", api.AddUser)
+	server.GET("/api/final-slots", api.GetSlot)
 	server.Run(":8080")
 }
