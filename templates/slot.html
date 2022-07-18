@@ -7,36 +7,24 @@
 <div class="userLogin">
     <div class="app-time">
         <div>
-            <form id="slots" class="input-group">
+            <ul class="date-input">{{.date}}</ul>
                 {{range .slots}}
-                    <ul>{{.date}}</ul>
-                    <button type="button" class="color-input">{{.startTime}}</button>
+                    {{if eq .status "expired"}}
+                        <button id="{{.startTime}}" type="button" class="color-input-expired">{{.startTime}}</button>
+                    {{else if eq .status "booked"}}
+                        <button id="{{.startTime}}" type="button" class="color-input-booked" onClick="cancelSlot(this.id)">{{.startTime}}</button>
+                    {{else if eq .status "cancelled"}}
+                        <button id="{{.startTime}}" type="button" class="color-input-cancelled" onClick="bookSlot(this.id)">{{.startTime}}</button>
+                    {{end}}
                 {{end}}
-            </form>
         </div>
     </div>
 </div>
 <script>
-    // let userSlotsURL = 'http://localhost:8080/api/v1/user-slots';
-    // let token = window.localStorage.getItem(email);
-    // console.log(token);
-    // if (token) {
-    //     token = "Bearer " + token;
-    //     fetch(userSlotsURL, {
-    //         method: 'GET',
-    //         headers: {
-    //              'Authorization': token,
-    //         }
-    //     }).then(function (response) {
-    //         if (response.ok) {
-    //             return response.json();
-    //         } else {
-    //             return Promise.reject(response);
-    //         }
-    //     }).catch(function (error) {
-    //         console.warn(error);
-    //     })
-    // }
+
+
+
+
 </script>
 </body>
 </html>

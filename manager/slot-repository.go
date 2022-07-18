@@ -43,7 +43,7 @@ func (db *SlotDB) Create(slot []entity.Slot) error {
 
 func (db *SlotDB) FindAll() []entity.Slot {
 	var slot []entity.Slot
-	db.connection.Find(&slot)
+	db.connection.Where("date=?", entity.DateForSlot()).Find(&slot)
 	return slot
 }
 

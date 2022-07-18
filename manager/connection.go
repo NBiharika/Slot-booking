@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"Slot_booking/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -15,4 +16,5 @@ func InitializeDB() {
 		log.Println("Error", err)
 	}
 	dbClient = db
+	dbClient.AutoMigrate(&entity.Booking{})
 }

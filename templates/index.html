@@ -4,7 +4,8 @@
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<div class="userLogin">
+<div id="slot-api"></div>
+<div class="userLogin" id="user-login">
     <div class="form-box">
         <div class="button-box">
             <div id="btn"></div>
@@ -55,7 +56,7 @@
     const myForm = document.getElementById('register1');
     let addUserURL = '/api/add-user';
     let generateTokenURL = '/api/generate-token';
-    let slotApiURL = '/api/slot';
+    let slotApiURL = '/api/v1/get-slot';
 
     myForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -85,32 +86,38 @@
                     return Promise.reject(response);
                 }
             }).then(function (tokenJson) {
-                window.localStorage.setItem(email, tokenJson.token);
-
-            }).catch(function (error) {
-                console.warn(error);
-            })
-        }).catch(function (error) {
-            console.warn(error);
-        })
-        let token = window.localStorage.getItem(email);
-        if (token) {
-            token = "Bearer " + token;
-            fetch(slotApiURL, {
-                method: 'GET',
-                // headers: {
-                //     'Authorization': token,
-                // }
-            }).then(function (response) {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return Promise.reject(response);
+                window.localStorage.setItem("token", tokenJson.token);
+                let token = window.localStorage.getItem("token");
+                if (token) {
+                    token = "Bearer " + token;
+                    fetch(slotApiURL, {
+                        method: 'GET',
+                        headers: {
+                            'content-type': 'application/json',
+                            'Authorization': token,
+                            'Accept': 'application/json',
+                        }
+                    }).then(function (response) {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            return Promise.reject(response);
+                        }
+                    }).then(function (slots) {
+                        console.log(slots)
+                        let x = document.getElementById("user-login");
+                        x.style.display = 'none';
+                        document.getElementById("slot-api").innerHTML = slots;
+                    }).catch(function (error) {
+                        console.warn(error);
+                    })
                 }
             }).catch(function (error) {
                 console.warn(error);
             })
-        }
+        }).catch(function (error) {
+                        console.warn(error);
+                    })
     });
 
     const myFormLogin = document.getElementById('login');
@@ -131,14 +138,92 @@
                 return Promise.reject(response);
             }
         }).then(function (tokenJson) {
-            window.localStorage.setItem(email, tokenJson.token);
-            let tokenForLogin = window.localStorage.getItem(email);
-            //http.request(`http://localhost:8080/api/v1/get-slot?key=value`, {'Authorization': "Bearer" + tokenForLogin}).on('response', (response) => response.pipe(res))
-            window.location.href="http://localhost:8080/api/v1/get-slot",{'Authorization': "Bearer" + tokenForLogin};
+            window.localStorage.setItem("token", tokenJson.token);
+            let token = window.localStorage.getItem("token");
+            if (token) {
+                token = "Bearer " + token;
+                fetch(slotApiURL, {
+                    method: 'GET',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                        'Accept': 'application/json',
+                    }
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        return Promise.reject(response);
+                    }
+                }).then(function (slots){
+                    console.log(slots)
+                    let x = document.getElementById("user-login");
+                    x.style.display='none';
+                    document.getElementById("slot-api").innerHTML=slots;
+
+                }).catch(function (error) {
+                    console.warn(error);
+                })
+            }
         }).catch(function (error) {
             console.warn(error);
         })
     });
+
+    let bookSlotURL = '/api/v1/add-booking';
+    let cancelSlotURL = '/api/v1/cancel-booking';
+
+    function bookSlot(startTime){
+        let body={"start_time": startTime};
+        let token = window.localStorage.getItem("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(bookSlotURL, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                },
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    //status = "booked";
+                    alert("slot booked successfully");
+                    //return response.json();
+                } else {
+                    alert("slot couldn't be booked")
+                    //return Promise.reject(response);
+                }
+            }).catch(function (error) {
+                console.warn(error);
+            })
+        }
+    };
+
+    function cancelSlot(startTime){
+        let body={"start_time": startTime};
+        let token = window.localStorage.getItem("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(cancelSlotURL, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                },
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    alert("slot cancelled successfully");
+                } else {
+                    alert("slot couldn't be cancelled");
+                }
+            }).catch(function (error) {
+                console.warn(error);
+            })
+        }
+    };
+
 </script>
 </body>
 </html>

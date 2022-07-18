@@ -2,7 +2,6 @@ package manager
 
 import (
 	"Slot_booking/entity"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +36,6 @@ func (db *BookingDB) Cancel(booking entity.Booking) (int64, error) {
 func (db *BookingDB) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	var booked []entity.Booking
 	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
-	fmt.Println("check:", err)
 	return booked, err
 }
 
