@@ -187,7 +187,6 @@
                 body: JSON.stringify(body),
             }).then(function (response) {
                 if (response.ok) {
-                    //status = "booked";
                     alert("slot booked successfully");
                     //return response.json();
                 } else {
@@ -206,7 +205,7 @@
         if (token) {
             token = "Bearer " + token;
             fetch(cancelSlotURL, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'content-type': 'application/json',
                     'Authorization': token,
