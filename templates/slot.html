@@ -6,8 +6,8 @@
 <body>
 <div class="userLogin">
     <div class="app-time">
-        <div>
-            <ul class="date-input">{{.date}}</ul>
+        <ul class="date-input">{{.date}}</ul>
+        <div class="row">
                 {{range .slots}}
                     {{if eq .status "expired"}}
                         <button id="{{.startTime}}" type="button" class="color-input-expired">{{.startTime}}</button>
