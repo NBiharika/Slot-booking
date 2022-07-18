@@ -24,7 +24,14 @@ func BookingRepo() BookingRepository {
 
 func (db *BookingDB) Create(booking entity.Booking) error {
 	//db.connection.AutoMigrate(&entity.Booking{})
-	err := db.connection.Create(&booking).Error
+	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=? and status=?", booking.UserID, booking.SlotID, "cancelled").Find(&booking).Error
+	if err == nil {
+		booking.Status = "booked"
+		db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Update("status", booking.Status)
+		return nil
+	} else {
+		err = db.connection.Create(&booking).Error
+	}
 	return err
 }
 

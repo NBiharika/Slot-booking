@@ -40,14 +40,11 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
 	user, err := c.userService.GetUser(jwtData.User.ID)
-	booking.UserID = user.ID
 
 	m, err := utils.ReadRequestBody(ctx)
-	//booking.UserID = uint64(m["user_id"].(float64))
+
 	startTime := m["start_time"].(string)
 	date := entity.DateForSlot()
-
-	booking.Status = "booked"
 
 	slot, err := c.slotService.Find(startTime, date)
 	if err != nil {
@@ -63,8 +60,12 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 		err = errors.New("crossed the booking time")
 		return err
 	}
+
+	booking.UserID = user.ID
 	booking.SlotID = slot.ID
+
 	c.service.BookSlot(booking)
+	booking.Status = "booked"
 	return nil
 }
 func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
@@ -102,7 +103,6 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		err = errors.New("crossed the cancellation time")
 		return "", err
 	}
-
 	booking.SlotID = slot.ID
 	rowsAffected, err := c.service.CancelBooking(booking)
 	if err != nil {
