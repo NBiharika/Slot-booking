@@ -139,6 +139,7 @@
             }
         }).then(function (tokenJson) {
             window.localStorage.setItem("token", tokenJson.token);
+            document.cookie = "token=tokenJson.token"
             let token = window.localStorage.getItem("token");
             if (token) {
                 token = "Bearer " + token;
@@ -187,11 +188,10 @@
                 body: JSON.stringify(body),
             }).then(function (response) {
                 if (response.ok) {
+                    document.getElementById(startTime).style.background = 'green';
                     alert("slot booked successfully");
-                    //return response.json();
                 } else {
                     alert("slot couldn't be booked")
-                    //return Promise.reject(response);
                 }
             }).catch(function (error) {
                 console.warn(error);
@@ -213,6 +213,7 @@
                 body: JSON.stringify(body),
             }).then(function (response) {
                 if (response.ok) {
+                    document.getElementById(startTime).style.background = 'yellow';
                     alert("slot cancelled successfully");
                 } else {
                     alert("slot couldn't be cancelled");

@@ -13,36 +13,39 @@
 }
 .row{
     column-count: 3;
+    column-gap: 30px;
+    column-width: 50px;
 }
 .date-input{
     width: 100%;
     position: center;
-    color: black;
+    color: darkblue;
     font-size: xx-large;
     font-weight: bolder;
     text-align: center;
     text-decoration: lightblue;
-    border: blueviolet;
-
+    border-style: solid;
+    border-width: thin;
+    border-color: blueviolet;
 }
 .color-input-expired {
-    width: 25%;
-    padding: 10px 30px;
+    width: 35%;
+    padding: 10px 50px;
     cursor: pointer;
     display: block;
-    margin: 30px;
+    margin: 50px;
     background: gray;
     border: 0;
     outline: none;
     border-radius: 30px;
-
+    position: center;
 }
 .color-input-booked {
-    width: 25%;
-    padding: 10px 30px;
+    width: 35%;
+    padding: 10px 50px;
     cursor: pointer;
     display: block;
-    margin: 30px;
+    margin: 50px;
     background: green;
     border: 0;
     outline: none;
@@ -50,11 +53,11 @@
     position: center;
 }
 .color-input-cancelled {
-    width: 25%;
-    padding: 10px 30px;
+    width: 35%;
+    padding: 10px 50px;
     cursor: pointer;
     display: block;
-    margin: 30px;
+    margin: 50px;
     background: yellow;
     border: 0;
     outline: none;

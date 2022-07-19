@@ -41,7 +41,8 @@ func (db *BookingDB) Cancel(booking entity.Booking) (int64, error) {
 
 func (db *BookingDB) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	var booked []entity.Booking
-	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
+	var err error
+	err = db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
 	return booked, err
 }
 

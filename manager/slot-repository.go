@@ -54,7 +54,7 @@ func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 func (db *SlotDB) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
 	var slot []entity.Slot
 
-	err := db.connection.Model(&entity.Slot{}).Where("id in (?)", slotIDs).Find(&slot).Error
+	err := db.connection.Model(&entity.Slot{}).Where("id in (?) and date=?", slotIDs, entity.DateForSlot()).Find(&slot).Error
 	return slot, err
 }
 
