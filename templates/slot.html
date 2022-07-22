@@ -1,22 +1,24 @@
 <html>
 <head>
     <title>{{.title}}</title>
-    <link rel="stylesheet" href="css/slot2.css">
+    <link rel="stylesheet" href="css/slot.css">
 </head>
 <body>
 <div class="userLogin">
     <div class="app-time">
+
         <ul class="date-input">{{.date}}</ul>
         <div class="row">
-                {{range .slots}}
-                    {{if eq .status "expired"}}
-                        <button id="{{.startTime}}" type="button" class="color-input-expired">{{.startTime}}</button>
-                    {{else if eq .status "booked"}}
-                        <button id="{{.startTime}}" type="button" class="color-input-booked" onClick="cancelSlot(this.id)">{{.startTime}}</button>
-                    {{else if eq .status "cancelled"}}
-                        <button id="{{.startTime}}" type="button" class="color-input-cancelled" onClick="bookSlot(this.id)">{{.startTime}}</button>
-                    {{end}}
+            {{range .slots}}
+                {{if eq .status "expired"}}
+                    <button id="{{.startTime}}" type="button" class="color-input-expired" onClick="expiredSlot(this.id)">{{.startTime}}</button>
+                {{else if eq .status "booked"}}
+                    <button id="{{.startTime}}" type="button" class="color-input-booked" onClick="cancelSlot(this.id)">{{.startTime}}</button>
+                {{else if eq .status "cancelled"}}
+                    <button id="{{.startTime}}" type="button" class="color-input-cancelled" onClick="bookSlot(this.id)">{{.startTime}}</button>
                 {{end}}
+            {{end}}
+            <button id="logOut" class="userLogout" onClick="logOut()">Log Out</button>
         </div>
     </div>
 </div>

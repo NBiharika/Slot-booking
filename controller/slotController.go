@@ -24,9 +24,11 @@ func NewSlotController(service service.SlotService) SlotController {
 
 func (c *slotController) FindAll() []entity.Slot {
 	return c.service.FindAll()
+	//argument - startdate,enddate - string
 }
 
 func (c *slotController) AddSlot(ctx *gin.Context) error {
+
 	date := entity.DateForSlot()
 	count, err := c.service.GetCount(date)
 	if err != nil {

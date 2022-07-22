@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="css/slot.css">
+</head>
+<body>
+<div class="userLogin">
+    <div class="app-time">
+        <ul class="date-input">{{.date}}</ul>
+        <div class="row">
+            <form id="slotCheck">
+            {{range .slots}}
+                {{if eq .status "expired"}}
+                    <button id="{{.startTime}}" type="button" class="color-input-expired">{{.startTime}}</button>
+                {{else if eq .status "booked"}}
+                    <button id="{{.startTime}}" type="button" class="color-input-booked"
+                            onClick="cancelSlot(this.id)">{{.startTime}}</button>
+                {{else if eq .status "cancelled"}}
+                    <button id="{{.startTime}}" type="button" class="color-input-cancelled"
+                            onClick="bookSlot(this.id)">{{.startTime}}</button>
+                {{end}}
+            {{end}}
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    let bookSlotURL = '/api/v1/add-booking';
+    let cancelSlotURL = '/api/v1/cancel-booking';
+    let slotApiURL = '/api/v1/get-slot';
+
+
+    const myForm = document.getElementById('slotCheck');
+
+    myForm.addEventListener('click', function (e) {
+        e.preventDefault();
+        let token = window.localStorage.getItem("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(slotApiURL, {
+                method: 'GET',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                    'Accept': 'application/json',
+                }
+            }).then(function (response) {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    return Promise.reject(response);
+                }
+            }).then(function (slots) {
+                console.log(slots)
+            }).catch(function (error) {
+                alert("no token provided")
+                console.warn(error);
+            })
+        }
+    })
+
+    function bookSlot(startTime) {
+        let body = {"start_time": startTime};
+        let token = window.localStorage.getItem("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(bookSlotURL, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                },
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    document.getElementById(startTime).style.background = 'green';
+                    window.location = '/api/v1/add-booking';
+                    alert("slot booked successfully");
+                }
+            }).catch(function (error) {
+                alert("crossed the booking time");
+                console.log(error.response.data);
+            })
+        }
+    }
+
+    function cancelSlot(startTime) {
+        let body = {"start_time": startTime};
+        let token = window.localStorage.getItem("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(cancelSlotURL, {
+                method: 'PUT',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                },
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    document.getElementById(startTime).style.background = 'yellow';
+                    //window.location = '/';
+                    //alert("slot cancelled successfully");
+                }
+            }).catch(function (error) {
+                alert("crossed the cancellation time");
+                console.warn(error);
+            })
+        }
+    }
+</script>
+</body>
+</html>
+
+
+

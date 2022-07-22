@@ -56,34 +56,84 @@
     let addUserURL = '/api/add-user';
     let generateTokenURL = '/api/generate-token';
     let slotApiURL = '/api/v1/get-slot';
-    let globalToken;
 
     const myForm = document.getElementById('register1');
+
     myForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const formData = new FormData(this);
+        let email = formData.get("email");
+        let data;
         fetch(addUserURL, {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(formData))
         }).then(function (response) {
             if (response.ok) {
-                window.location = '/';
                 return response.json();
             } else {
                 return Promise.reject(response);
             }
+        }).then(function (json) {
+            data = json;
+            fetch(generateTokenURL, {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData))
+            }).then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return Promise.reject(response);
+                }
+            }).then(function (tokenJson) {
+                //window.localStorage.setItem("token", tokenJson.token);
+                //let token = window.localStorage.getItem("token");
+                setCookie("token", tokenJson.token, 1);
+                let token = getCookie("token");
+                if (token) {
+                    alert("Your token is:" + token);
+                    token = "Bearer " + token;
+                    fetch(slotApiURL, {
+                        method: 'GET',
+                        headers: {
+                            'content-type': 'application/json',
+                            'Authorization': token,
+                            'Accept': 'application/json',
+                        }
+                    }).then(function (response) {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            return Promise.reject(response);
+                        }
+                    }).then(function (slots) {
+                        console.log(slots)
+                        let x = document.getElementById("user-login");
+                        x.style.display = 'none';
+                        //window.location.href = 'http://localhost:8080/api/v1/get-slot'
+                        window.location.assign('http://localhost:8080/api/v1/get-slot')
+                        //document.getElementById("slot-api").innerHTML = slots;
+                    }).catch(function (error) {
+
+                        console.warn(error);
+                    })
+                }
+            }).catch(function (error) {
+                console.warn(error);
+            })
         }).catch(function (error) {
-            alert("Email already exists, please register using a different Email ID")
+            alert("email already exists")
             console.warn(error);
         })
     });
 
     const myFormLogin = document.getElementById('login');
+
     myFormLogin.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const formData = new FormData(this);
+        const email = formData.get("email");
 
         fetch(generateTokenURL, {
             method: 'POST',
@@ -95,7 +145,8 @@
                 return Promise.reject(response);
             }
         }).then(function (tokenJson) {
-            globalToken=tokenJson.token;
+            //window.localStorage.setItem("token", tokenJson.token);
+            //let token = window.localStorage.getItem("token");
             setCookie("token", tokenJson.token, 1);
             let token = getCookie("token");
             if (token) {
@@ -106,99 +157,31 @@
                         'content-type': 'application/json',
                         'Authorization': token,
                         'Accept': 'application/json',
-                    }
+                    },
                 }).then(function (response) {
                     if (response.ok) {
+                        //window.location.assign('http://localhost:8080/api/v1/get-slot')
+                        //window.location.href= './'
                         return response.text();
                     } else {
                         return Promise.reject(response);
                     }
                 }).then(function (slots) {
+                    console.log(slots)
                     let x = document.getElementById("user-login");
                     x.style.display = 'none';
-                    document.getElementById("slot-api").innerHTML = slots;
+                    document.getElementById("slot-api").innerHTML = '/api/v1/get-slot';
+                    //document.getElementById("slot-api").innerHTML = slots
                 }).catch(function (error) {
+                    alert("no token provided")
                     console.warn(error);
                 })
             }
         }).catch(function (error) {
-                alert("invalid credentials");
-                console.warn(error);
+            alert("invalid credentials");
+            console.warn(error);
         })
     });
-
-    let bookSlotURL = '/api/v1/add-booking';
-    let cancelSlotURL = '/api/v1/cancel-booking';
-
-    function bookSlot(startTime) {
-        let body = {"start_time": startTime};
-        let token =getCookie("token")
-        if (token) {
-            token = "Bearer " + token;
-            fetch(bookSlotURL, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-                body: JSON.stringify(body),
-            }).then(function (response) {
-                if (response.ok) {
-                    document.getElementById(startTime).onclick = function(){cancelSlot(startTime)};
-                    document.getElementById(startTime).className='color-input-booked'
-                    document.getElementById(startTime).style.background = 'green';
-                    alert("Slot booked successfully");
-                }
-            }).catch(function (error) {
-                alert("Crossed the booking time");
-                console.log(error.response.data);
-            })
-        }
-    }
-
-    function cancelSlot(startTime) {
-        let hh = startTime.slice(0,2);
-        let mm = startTime.slice(3,5);
-        let minutesToAdd=30;
-        let currentDate = new Date();
-        let futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
-
-        let presentDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(), hh, mm);
-
-        if (presentDate<futureDate){
-            alert("The booked slot within 30 minutes can't be cancelled")
-            return;
-        }
-
-        let body = {"start_time": startTime};
-        let token =getCookie("token")
-        if (token) {
-            token = "Bearer " + token;
-            fetch(cancelSlotURL, {
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-                body: JSON.stringify(body),
-            }).then(function (response) {
-                if (response.ok) {
-                    document.getElementById(startTime).onclick = function(){bookSlot(startTime)};
-                    document.getElementById(startTime).className='color-input-cancelled'
-                    document.getElementById(startTime).style.background = 'yellow';
-                    //window.location = '/';
-                    alert("slot cancelled successfully");
-                }
-            }).catch(function (error) {
-                alert("crossed the cancellation time");
-                console.warn(error);
-            })
-        }
-    }
-
-    function expiredSlot(startTime) {
-        alert("slot has expired");
-    }
 
     function setCookie(cname, cvalue, exdays) {
         const d = new Date();
@@ -225,42 +208,11 @@
 
     function checkCookie() {
         let token = getCookie("token");
-        if (token !== "") {
-            if (token) {
-                token = "Bearer " + token;
-                fetch(slotApiURL, {
-                    method: 'GET',
-                    headers: {
-                        'content-type': 'application/json',
-                        'Authorization': token,
-                        'Accept': 'application/json',
-                    }
-                }).then(function (response) {
-                    if (response.ok) {
-                        return response.text();
-                    } else {
-                        return Promise.reject(response);
-                    }
-                }).then(function (slots) {
-                    let x = document.getElementById("user-login");
-                    x.style.display = 'none';
-                    document.getElementById("slot-api").innerHTML = slots;
-                }).catch(function (error) {
-                    console.warn(error);
-                })
-            }
+        if (token) {
+            alert("Your token is:" + token);
+            window.location = '/';
         }
     }
-
-    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
-        checkCookie();
-    }
-
-    function logOut(){
-        document.cookie = "token=; expires = Thu, 01 Jan 1970 00:00:00 UTC" + ";path=/";
-        window.location.reload();
-    }
-
 </script>
 </body>
 </html>

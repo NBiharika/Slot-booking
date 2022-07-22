@@ -21,6 +21,7 @@ func (Slot) TableName() string {
 	return "slot"
 }
 
+//argument: date time.Time
 func DateForSlot() string {
 	DateFormat := "2006-01-02"
 	now := time.Now()
@@ -37,6 +38,8 @@ func PresentTime() string {
 }
 
 func PresentTimePlus30minutes() string {
+	//now := time.Now()
+	//PresentTimePlus30minutes := now.Add(time.Minute * 30)
 	presentTime := PresentTime()
 	presentTimeH, _ := strconv.Atoi(presentTime[:2])
 	presentTimeM, _ := strconv.Atoi(presentTime[3:])

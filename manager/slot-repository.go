@@ -47,6 +47,8 @@ func (db *SlotDB) FindAll() []entity.Slot {
 	return slot
 }
 
+//date>=startdate,enddate
+
 func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 	err := db.connection.Where(&slot).Find(&slot).Error
 	return slot, err
