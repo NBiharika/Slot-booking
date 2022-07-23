@@ -21,12 +21,9 @@ func (Slot) TableName() string {
 	return "slot"
 }
 
-//argument: date time.Time
-func DateForSlot() string {
+func DateForSlot(date time.Time) string {
 	DateFormat := "2006-01-02"
-	now := time.Now()
-
-	formattedDate := now.Format(DateFormat)
+	formattedDate := date.Format(DateFormat)
 	return formattedDate
 }
 

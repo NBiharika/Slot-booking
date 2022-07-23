@@ -11,11 +11,20 @@
     background-size: cover;
     position: absolute;
 }
+.toggle-button{
+    display: inline-block;
+    padding: 10px 49.8px;
+    cursor: pointer;
+    position: center;
+    margin-bottom: 30px;
+    font-weight: bolder;
+    font-size: larger;
+}
 .row{
     column-count: 3;
     column-gap: 30px;
     column-width: 50px;
-
+    display: none;
 }
 .date-input{
     width: 100%;
@@ -102,8 +111,8 @@
 }
 .userLogout{
     width: 25%;
-    margin-top: 10px;
-    margin-left: -450px;
+    margin-top: 700px;
+    margin-left: -950px;
     cursor: pointer;
     padding: 15px 20px;
     font-weight: bold;

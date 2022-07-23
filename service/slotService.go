@@ -7,7 +7,7 @@ import (
 
 type SlotService interface {
 	AddSlot(slot []entity.Slot) ([]entity.Slot, error)
-	FindAll() []entity.Slot
+	FindAll(startDate string, endDate string) []entity.Slot
 	Find(startTime, date string) (entity.Slot, error)
 	GetSlots(slotIDs []uint64) ([]entity.Slot, error)
 	GetCount(date string) (int64, error)
@@ -28,8 +28,8 @@ func (service *service) AddSlot(slot []entity.Slot) ([]entity.Slot, error) {
 	return slot, err
 }
 
-func (service *service) FindAll() []entity.Slot {
-	return service.slots.FindAll()
+func (service *service) FindAll(startDate string, endDate string) []entity.Slot {
+	return service.slots.FindAll(startDate, endDate)
 }
 
 func (service *service) Find(startTime, date string) (entity.Slot, error) {

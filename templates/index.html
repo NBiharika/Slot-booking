@@ -117,6 +117,9 @@
                     let x = document.getElementById("user-login");
                     x.style.display = 'none';
                     document.getElementById("slot-api").innerHTML = slots;
+                    let y = document.getElementById("2022-07-23-slots")
+                    y.style.display='block'
+                    localStorage.setItem(prevDate,"2022-07-23-slots")
                 }).catch(function (error) {
                     console.warn(error);
                 })
@@ -130,8 +133,8 @@
     let bookSlotURL = '/api/v1/add-booking';
     let cancelSlotURL = '/api/v1/cancel-booking';
 
-    function bookSlot(startTime) {
-        let body = {"start_time": startTime};
+    function bookSlot(startTime,date) {
+        let body = {"start_time": startTime,"date": date};
         let token =getCookie("token")
         if (token) {
             token = "Bearer " + token;
@@ -144,33 +147,35 @@
                 body: JSON.stringify(body),
             }).then(function (response) {
                 if (response.ok) {
-                    document.getElementById(startTime).onclick = function(){cancelSlot(startTime)};
-                    document.getElementById(startTime).className='color-input-booked'
-                    document.getElementById(startTime).style.background = 'green';
+                    document.getElementById(date + "-" + startTime).onclick = function(){cancelSlot(startTime,date)};
+                    document.getElementById(date + "-" + startTime).className='color-input-booked'
+                    document.getElementById(date + "-" + startTime).style.background = 'green';
                     alert("Slot booked successfully");
                 }
             }).catch(function (error) {
                 alert("Crossed the booking time");
-                console.log(error.response.data);
+                console.warn(error);
             })
         }
     }
 
-    function cancelSlot(startTime) {
+    function cancelSlot(startTime,date) {
         let hh = startTime.slice(0,2);
         let mm = startTime.slice(3,5);
+        const slotMonth = Number(date.slice(5,7));
+        const slotDay = Number(date.slice(8,10));
         let minutesToAdd=30;
         let currentDate = new Date();
+        const currMonth = currentDate.getMonth()+1;
+        const currDay = currentDate.getDate();
         let futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
-
         let presentDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(), hh, mm);
-
-        if (presentDate<futureDate){
+        if (currMonth==slotMonth && currDay==slotDay && presentDate<futureDate){
             alert("The booked slot within 30 minutes can't be cancelled")
             return;
         }
 
-        let body = {"start_time": startTime};
+        let body = {"start_time": startTime,"date": date};
         let token =getCookie("token")
         if (token) {
             token = "Bearer " + token;
@@ -183,10 +188,9 @@
                 body: JSON.stringify(body),
             }).then(function (response) {
                 if (response.ok) {
-                    document.getElementById(startTime).onclick = function(){bookSlot(startTime)};
-                    document.getElementById(startTime).className='color-input-cancelled'
-                    document.getElementById(startTime).style.background = 'yellow';
-                    //window.location = '/';
+                    document.getElementById(date + "-" + startTime).onclick = function(){bookSlot(startTime,date)};
+                    document.getElementById(date + "-" + startTime).className='color-input-cancelled'
+                    document.getElementById(date + "-" + startTime).style.background='yellow'
                     alert("slot cancelled successfully");
                 }
             }).catch(function (error) {
@@ -196,7 +200,7 @@
         }
     }
 
-    function expiredSlot(startTime) {
+    function expiredSlot(startTime,date) {
         alert("slot has expired");
     }
 
@@ -261,6 +265,23 @@
         window.location.reload();
     }
 
+    let prevDate="2022-07-23-slots";
+    localStorage.setItem("prevDate",prevDate);
+    window.onload = function () {
+        let prevX = document.getElementById(prevDate);
+    };
+
+    function toggle(date){
+        let customID = date + "-slots";
+        let x = document.getElementById(customID)
+        if(localStorage.getItem("prevDate")){
+            let getDate = localStorage.getItem("prevDate")
+            let y=document.getElementById(getDate)
+            y.style.display='none';
+        }
+        x.style.display='block';
+        localStorage.setItem("prevDate",customID);
+    }
 </script>
 </body>
 </html>

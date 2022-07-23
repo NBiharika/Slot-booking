@@ -6,7 +6,7 @@ import (
 )
 
 type BookingRepository interface {
-	Create(booking entity.Booking) error
+	Create(booking entity.Booking) (int64, error)
 	FindAll() []entity.Booking
 	Cancel(booking entity.Booking) (int64, error)
 	GetUserBookings(userID uint64) ([]entity.Booking, error)
@@ -22,16 +22,18 @@ func BookingRepo() BookingRepository {
 	}
 }
 
-func (db *BookingDB) Create(booking entity.Booking) error {
-	//db.connection.AutoMigrate(&entity.Booking{})
-	resp := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=? and status=?", booking.UserID, booking.SlotID, "cancelled").Find(&booking)
-	if resp.Error == nil {
+func (db *BookingDB) Create(booking entity.Booking) (int64, error) {
+	var resp *gorm.DB
+	response := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=? and status=?", booking.UserID, booking.SlotID, "cancelled").Find(&booking)
+	if response.Error == nil {
 		booking.Status = "booked"
-		db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Update("status", booking.Status)
+		resp = db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Update("status", booking.Status)
+		if resp.RowsAffected != 0 {
+			return resp.RowsAffected, nil
+		}
 	}
-	err := db.connection.Create(&booking).Error
-
-	return err
+	resp = db.connection.Create(&booking)
+	return resp.RowsAffected, resp.Error
 }
 
 func (db *BookingDB) Cancel(booking entity.Booking) (int64, error) {
