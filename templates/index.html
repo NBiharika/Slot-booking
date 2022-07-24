@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>{{.title}}</title>
-    <link rel="stylesheet" href="css/index1.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 <div id="slot-api"></div>
@@ -20,7 +20,7 @@
                    required>
             <button type="submit" class="submit-btn">Log In</button>
         </form>
-        <form id="register1" class="input-group">
+        <form id="registerUser" class="input-group">
             <label for="first_name1">First Name</label>
             <input type="text" id="first_name1" class="input-field" name="firstName" placeholder="Enter First Name"
                    required>
@@ -38,7 +38,7 @@
 </div>
 <script>
     let x = document.getElementById("login");
-    let y = document.getElementById("register1");
+    let y = document.getElementById("registerUser");
     let z = document.getElementById("btn");
 
     function register() {
@@ -58,7 +58,7 @@
     let slotApiURL = '/api/v1/get-slot';
     let globalToken;
 
-    const myForm = document.getElementById('register1');
+    const myForm = document.getElementById('registerUser');
     myForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -114,11 +114,11 @@
                         return Promise.reject(response);
                     }
                 }).then(function (slots) {
-                    let x = document.getElementById("user-login");
-                    x.style.display = 'none';
+                    let userLoginID = document.getElementById("user-login");
+                    userLoginID.style.display = 'none';
                     document.getElementById("slot-api").innerHTML = slots;
-                    let y = document.getElementById(prevDate)
-                    y.style.display='block'
+                    let dateID = document.getElementById(prevDate)
+                    dateID.style.display='block'
                     localStorage.setItem(prevDate, prevDate)
                 }).catch(function (error) {
                     console.warn(error);
@@ -246,8 +246,8 @@
                         return Promise.reject(response);
                     }
                 }).then(function (slots) {
-                    let x = document.getElementById("user-login");
-                    x.style.display = 'none';
+                    let userLoginID = document.getElementById("user-login");
+                    userLoginID.style.display = 'none';
                     document.getElementById("slot-api").innerHTML = slots;
                 }).catch(function (error) {
                     console.warn(error);
@@ -275,13 +275,13 @@
 
     function toggle(date){
         let customID = date + "-slots";
-        let x = document.getElementById(customID)
+        let getCustomID = document.getElementById(customID)
         if(localStorage.getItem("prevDate")){
             let getDate = localStorage.getItem("prevDate")
-            let y=document.getElementById(getDate)
-            y.style.display='none';
+            let getDateID=document.getElementById(getDate)
+            getDateID.style.display='none';
         }
-        x.style.display='block';
+        getCustomID.style.display='block';
         localStorage.setItem("prevDate",customID);
     }
 </script>
