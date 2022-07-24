@@ -117,9 +117,9 @@
                     let x = document.getElementById("user-login");
                     x.style.display = 'none';
                     document.getElementById("slot-api").innerHTML = slots;
-                    let y = document.getElementById("2022-07-23-slots")
+                    let y = document.getElementById("2022-07-24-slots")
                     y.style.display='block'
-                    localStorage.setItem(prevDate,"2022-07-23-slots")
+                    localStorage.setItem(prevDate,"2022-07-24-slots")
                 }).catch(function (error) {
                     console.warn(error);
                 })
@@ -265,7 +265,7 @@
         window.location.reload();
     }
 
-    let prevDate="2022-07-23-slots";
+    let prevDate="2022-07-24-slots";
     localStorage.setItem("prevDate",prevDate);
     window.onload = function () {
         let prevX = document.getElementById(prevDate);
