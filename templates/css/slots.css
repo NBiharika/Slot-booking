@@ -111,8 +111,8 @@
 }
 .userLogout{
     width: 25%;
-    margin-top: 700px;
-    margin-left: -950px;
+    margin-left: 530px;
+    margin-top: -20px;
     cursor: pointer;
     padding: 15px 20px;
     font-weight: bold;
