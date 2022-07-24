@@ -264,17 +264,10 @@
         document.cookie = "token=; expires = Thu, 01 Jan 1970 00:00:00 UTC" + ";path=/";
         window.location.reload();
     }
-    let currentDate = new Date();
-    const currYear = currentDate.getFullYear();
-    const currMonth = currentDate.getMonth()+1;
-    const currDay = currentDate.getDate();
-    let prevDate;
-    if (currMonth<10){
-        prevDate = currYear + "-0" + currMonth + "-" + currDay + "-slots"
-    }else{
-        prevDate = currYear + "-" + currMonth + "-" + currDay + "-slots"
-    }
-    console.log(prevDate)
+
+    let yourDate = new Date()
+    yourDate = yourDate.toISOString().split('T')[0]
+    let prevDate = yourDate + "-slots";
     localStorage.setItem("prevDate",prevDate);
     window.onload = function () {
         let prevX = document.getElementById(prevDate);
