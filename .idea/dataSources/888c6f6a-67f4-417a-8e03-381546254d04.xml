@@ -3,17 +3,9 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.40">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <Grants>1||-9223372036854775808|c|G
-1||10|c|G
-1||10|C|G
-1||10|T|G
-14022||-9223372036854775808|c|G
-14022||10|c|G
-14022||10|C|G
-14022||10|T|G</Grants>
-      <IntrospectionStateNumber>2575</IntrospectionStateNumber>
+      <IntrospectionStateNumber>6694</IntrospectionStateNumber>
       <ServerVersion>14.4</ServerVersion>
-      <StartupTime>1658070279</StartupTime>
+      <StartupTime>1658546306</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -809,11 +801,10 @@ false Zulu
 13657||10|C|G
 13657||-9223372036854775808|U|G
 13657||10|U|G</Grants>
-      <IntrospectionStateNumber>2575</IntrospectionStateNumber>
+      <IntrospectionStateNumber>6697</IntrospectionStateNumber>
       <ObjectId>14023</ObjectId>
       <Relations>sequence|table|24586|24587|1
 sequence|table|24805|24806|1
-sequence|table|24816|24817|1
 </Relations>
       <OwnerName>niharika</OwnerName>
     </database>
@@ -829,17 +820,17 @@ sequence|table|24816|24817|1
     <role id="4" parent="1" name="pg_database_owner">
       <ObjectId>6171</ObjectId>
     </role>
-    <role id="5" parent="1" name="pg_read_all_data">
-      <ObjectId>6181</ObjectId>
+    <role id="5" parent="1" name="pg_execute_server_program">
+      <ObjectId>4571</ObjectId>
     </role>
-    <role id="6" parent="1" name="pg_write_all_data">
-      <ObjectId>6182</ObjectId>
-    </role>
-    <role id="7" parent="1" name="pg_monitor">
+    <role id="6" parent="1" name="pg_monitor">
       <ObjectId>3373</ObjectId>
       <RoleGrants>3374
 3375
 3377</RoleGrants>
+    </role>
+    <role id="7" parent="1" name="pg_read_all_data">
+      <ObjectId>6181</ObjectId>
     </role>
     <role id="8" parent="1" name="pg_read_all_settings">
       <ObjectId>3374</ObjectId>
@@ -847,20 +838,20 @@ sequence|table|24816|24817|1
     <role id="9" parent="1" name="pg_read_all_stats">
       <ObjectId>3375</ObjectId>
     </role>
-    <role id="10" parent="1" name="pg_stat_scan_tables">
-      <ObjectId>3377</ObjectId>
-    </role>
-    <role id="11" parent="1" name="pg_read_server_files">
+    <role id="10" parent="1" name="pg_read_server_files">
       <ObjectId>4569</ObjectId>
     </role>
-    <role id="12" parent="1" name="pg_write_server_files">
-      <ObjectId>4570</ObjectId>
-    </role>
-    <role id="13" parent="1" name="pg_execute_server_program">
-      <ObjectId>4571</ObjectId>
-    </role>
-    <role id="14" parent="1" name="pg_signal_backend">
+    <role id="11" parent="1" name="pg_signal_backend">
       <ObjectId>4200</ObjectId>
+    </role>
+    <role id="12" parent="1" name="pg_stat_scan_tables">
+      <ObjectId>3377</ObjectId>
+    </role>
+    <role id="13" parent="1" name="pg_write_all_data">
+      <ObjectId>6182</ObjectId>
+    </role>
+    <role id="14" parent="1" name="pg_write_server_files">
+      <ObjectId>4570</ObjectId>
     </role>
     <tablespace id="15" parent="1" name="pg_default">
       <ObjectId>1663</ObjectId>
@@ -4234,7 +4225,7 @@ sequence|table|24816|24817|1
     <schema id="261" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>2575</IntrospectionStateNumber>
+      <IntrospectionStateNumber>6697</IntrospectionStateNumber>
       <ObjectId>2200</ObjectId>
       <StateNumber>526</StateNumber>
       <OwnerName>niharika</OwnerName>
@@ -4245,119 +4236,108 @@ sequence|table|24816|24817|1
       <StateNumber>2141</StateNumber>
       <OwnerName>niharika</OwnerName>
     </sequence>
-    <sequence id="263" parent="261" name="bookings_id_seq">
-      <DataType>bigint|0s</DataType>
-      <ObjectId>24816</ObjectId>
-      <StateNumber>2430</StateNumber>
-      <OwnerName>niharika</OwnerName>
-    </sequence>
-    <sequence id="264" parent="261" name="users_id_seq">
+    <sequence id="263" parent="261" name="users_id_seq">
       <DataType>bigint|0s</DataType>
       <ObjectId>24805</ObjectId>
       <StateNumber>2428</StateNumber>
       <OwnerName>niharika</OwnerName>
     </sequence>
-    <table id="265" parent="261" name="bookings">
-      <ObjectId>24817</ObjectId>
-      <StateNumber>2430</StateNumber>
+    <table id="264" parent="261" name="bookings">
+      <ObjectId>32322</ObjectId>
+      <StateNumber>6695</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>niharika</OwnerName>
     </table>
-    <table id="266" parent="261" name="slot">
+    <table id="265" parent="261" name="slot">
       <ObjectId>24587</ObjectId>
       <StateNumber>2160</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>niharika</OwnerName>
     </table>
-    <table id="267" parent="261" name="users">
+    <table id="266" parent="261" name="users">
       <ObjectId>24806</ObjectId>
       <StateNumber>2430</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>niharika</OwnerName>
     </table>
-    <column id="268" parent="265" name="id">
+    <column id="267" parent="264" name="user_id">
       <DataType>bigint|0s</DataType>
-      <DefaultExpression>nextval(&apos;bookings_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
-      <StateNumber>2430</StateNumber>
+      <StateNumber>6695</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="269" parent="265" name="user_id">
+    <column id="268" parent="264" name="slot_id">
       <DataType>bigint|0s</DataType>
+      <NotNull>1</NotNull>
       <Position>2</Position>
-      <StateNumber>2570</StateNumber>
+      <StateNumber>6695</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="270" parent="265" name="slot_id">
-      <DataType>bigint|0s</DataType>
-      <Position>3</Position>
-      <StateNumber>2571</StateNumber>
-      <TypeId>20</TypeId>
-    </column>
-    <column id="271" parent="265" name="status">
+    <column id="269" parent="264" name="status">
       <DataType>text|0s</DataType>
-      <Position>4</Position>
-      <StateNumber>2430</StateNumber>
+      <Position>3</Position>
+      <StateNumber>6695</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="272" parent="265" name="created_on">
+    <column id="270" parent="264" name="created_on">
+      <DataType>timestamp with time zone|0s</DataType>
+      <Position>4</Position>
+      <StateNumber>6695</StateNumber>
+      <TypeId>1184</TypeId>
+    </column>
+    <column id="271" parent="264" name="updated_on">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>5</Position>
-      <StateNumber>2430</StateNumber>
+      <StateNumber>6695</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <column id="273" parent="265" name="updated_on">
-      <DataType>timestamp with time zone|0s</DataType>
-      <Position>6</Position>
-      <StateNumber>2430</StateNumber>
-      <TypeId>1184</TypeId>
-    </column>
-    <foreign-key id="274" parent="265" name="fk_bookings_user">
+    <foreign-key id="272" parent="264" name="fk_bookings_user">
       <ColNames>user_id</ColNames>
-      <ObjectId>24873</ObjectId>
+      <ObjectId>32334</ObjectId>
       <RefColNames>id</RefColNames>
       <RefColPositions>1</RefColPositions>
-      <StateNumber>2570</StateNumber>
+      <StateNumber>6695</StateNumber>
       <RefTableId>24806</RefTableId>
       <RefTableName>users</RefTableName>
       <RefTableKind>table</RefTableKind>
     </foreign-key>
-    <foreign-key id="275" parent="265" name="fk_bookings_slot">
+    <foreign-key id="273" parent="264" name="fk_bookings_slot">
       <ColNames>slot_id</ColNames>
-      <ObjectId>24879</ObjectId>
+      <ObjectId>32329</ObjectId>
       <RefColNames>id</RefColNames>
       <RefColPositions>1</RefColPositions>
-      <StateNumber>2571</StateNumber>
+      <StateNumber>6695</StateNumber>
       <RefTableId>24587</RefTableId>
       <RefTableName>slot</RefTableName>
       <RefTableKind>table</RefTableKind>
     </foreign-key>
-    <index id="276" parent="265" name="bookings_pkey">
-      <ColNames>id</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>24823</ObjectId>
-      <Primary>1</Primary>
-      <StateNumber>2430</StateNumber>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-    </index>
-    <index id="277" parent="265" name="idx_name">
+    <index id="274" parent="264" name="bookings_pkey">
       <ColNames>user_id
 slot_id</ColNames>
-      <ObjectId>24884</ObjectId>
-      <StateNumber>2574</StateNumber>
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>32327</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>6695</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="278" parent="265" name="bookings_pkey">
+    <index id="275" parent="264" name="idx_name">
+      <ColNames>user_id
+slot_id</ColNames>
+      <ObjectId>32339</ObjectId>
+      <StateNumber>6696</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <key id="276" parent="264" name="bookings_pkey">
       <NameSurrogate>1</NameSurrogate>
-      <ObjectId>24824</ObjectId>
+      <ObjectId>32328</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>2430</StateNumber>
-      <UnderlyingIndexId>24823</UnderlyingIndexId>
+      <StateNumber>6695</StateNumber>
+      <UnderlyingIndexId>32327</UnderlyingIndexId>
     </key>
-    <column id="279" parent="266" name="id">
+    <column id="277" parent="265" name="id">
       <DataType>bigint|0s</DataType>
       <DefaultExpression>nextval(&apos;&quot;Slot_id_seq&quot;&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
@@ -4365,31 +4345,31 @@ slot_id</ColNames>
       <StateNumber>2142</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="280" parent="266" name="date">
+    <column id="278" parent="265" name="date">
       <DataType>varchar(16)|0s</DataType>
       <Position>2</Position>
       <StateNumber>776</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="281" parent="266" name="start_time">
+    <column id="279" parent="265" name="start_time">
       <DataType>text|0s</DataType>
       <Position>3</Position>
       <StateNumber>776</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="282" parent="266" name="created_on">
+    <column id="280" parent="265" name="created_on">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>4</Position>
       <StateNumber>776</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <column id="283" parent="266" name="updated_on">
+    <column id="281" parent="265" name="updated_on">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>5</Position>
       <StateNumber>776</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <index id="284" parent="266" name="Slot_pkey">
+    <index id="282" parent="265" name="Slot_pkey">
       <ColNames>id</ColNames>
       <ObjectId>24664</ObjectId>
       <Primary>1</Primary>
@@ -4397,13 +4377,13 @@ slot_id</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="285" parent="266" name="Slot_pkey">
+    <key id="283" parent="265" name="Slot_pkey">
       <ObjectId>24665</ObjectId>
       <Primary>1</Primary>
       <StateNumber>2142</StateNumber>
       <UnderlyingIndexId>24664</UnderlyingIndexId>
     </key>
-    <column id="286" parent="267" name="id">
+    <column id="284" parent="266" name="id">
       <DataType>bigint|0s</DataType>
       <DefaultExpression>nextval(&apos;users_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
@@ -4411,43 +4391,43 @@ slot_id</ColNames>
       <StateNumber>2428</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="287" parent="267" name="first_name">
+    <column id="285" parent="266" name="first_name">
       <DataType>varchar(32)|0s</DataType>
       <Position>2</Position>
       <StateNumber>2428</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="288" parent="267" name="last_name">
+    <column id="286" parent="266" name="last_name">
       <DataType>varchar(32)|0s</DataType>
       <Position>3</Position>
       <StateNumber>2428</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="289" parent="267" name="email">
+    <column id="287" parent="266" name="email">
       <DataType>varchar(256)|0s</DataType>
       <Position>4</Position>
       <StateNumber>2428</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="290" parent="267" name="password">
+    <column id="288" parent="266" name="password">
       <DataType>text|0s</DataType>
       <Position>5</Position>
       <StateNumber>2428</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="291" parent="267" name="created_on">
+    <column id="289" parent="266" name="created_on">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>6</Position>
       <StateNumber>2428</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <column id="292" parent="267" name="updated_on">
+    <column id="290" parent="266" name="updated_on">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>7</Position>
       <StateNumber>2428</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <index id="293" parent="267" name="users_pkey">
+    <index id="291" parent="266" name="users_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24812</ObjectId>
@@ -4456,7 +4436,7 @@ slot_id</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="294" parent="267" name="users_email_key">
+    <index id="292" parent="266" name="users_email_key">
       <ColNames>email</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24814</ObjectId>
@@ -4467,14 +4447,14 @@ slot_id</ColNames>
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="295" parent="267" name="users_pkey">
+    <key id="293" parent="266" name="users_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24813</ObjectId>
       <Primary>1</Primary>
       <StateNumber>2428</StateNumber>
       <UnderlyingIndexId>24812</UnderlyingIndexId>
     </key>
-    <key id="296" parent="267" name="users_email_key">
+    <key id="294" parent="266" name="users_email_key">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24815</ObjectId>
       <StateNumber>2428</StateNumber>
