@@ -26,6 +26,8 @@ func BookingRepo() BookingRepository {
 
 func (db *BookingDB) CountSlotsForAUser(booking entity.Booking) (int64, error) {
 	var countSlotsForAUser int64
+	//todayDate := entity.DateForSlot(time.Now())
+	//date:=db.connection.Model(&entity.Slot{}).Where("date>=? and start_time>=?",todayDate, entity.PresentTime())
 	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", booking.UserID, "booked").Count(&countSlotsForAUser).Error
 	return countSlotsForAUser, err
 }

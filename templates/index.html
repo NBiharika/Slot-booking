@@ -63,12 +63,58 @@
         e.preventDefault();
 
         const formData = new FormData(this);
+        let email = document.getElementById("email1").value;
+        let password = document.getElementById("password1").value;
+
         fetch(addUserURL, {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(formData))
         }).then(function (response) {
             if (response.ok) {
-                window.location = '/';
+                //window.location = '/';
+                fetch(generateTokenURL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "email": email,
+                        "password": password,
+                    }),
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return Promise.reject(response);
+                    }
+                }).then(function (tokenJson) {
+                    globalToken = tokenJson.token;
+                    setCookie("token", tokenJson.token, 1);
+                    let token = getCookie("token");
+                    if (token) {
+                        token = "Bearer " + token;
+                        fetch(slotApiURL, {
+                            method: 'GET',
+                            headers: {
+                                'content-type': 'application/json',
+                                'Authorization': token,
+                                'Accept': 'application/json',
+                            }
+                        }).then(function (response) {
+                            if (response.ok) {
+                                return response.text();
+                            } else {
+                                return Promise.reject(response);
+                            }
+                        }).then(function (slots) {
+                            let userLoginID = document.getElementById("user-login");
+                            userLoginID.style.display = 'none';
+                            document.getElementById("slot-api").innerHTML = slots;
+                            let dateID = document.getElementById(prevDate)
+                            dateID.style.display = 'block'
+                            localStorage.setItem(prevDate, prevDate)
+                        }).catch(function (error) {
+                            console.warn(error);
+                        })
+                    }
+                })
                 return response.json();
             } else {
                 return Promise.reject(response);
@@ -77,14 +123,13 @@
             alert("Email already exists, please register using a different Email ID")
             console.warn(error);
         })
+
     });
 
     const myFormLogin = document.getElementById('login');
     myFormLogin.addEventListener('submit', function (e) {
         e.preventDefault();
-
         const formData = new FormData(this);
-
         fetch(generateTokenURL, {
             method: 'POST',
             body: JSON.stringify(Object.fromEntries(formData)),
@@ -95,7 +140,7 @@
                 return Promise.reject(response);
             }
         }).then(function (tokenJson) {
-            globalToken=tokenJson.token;
+            globalToken = tokenJson.token;
             setCookie("token", tokenJson.token, 1);
             let token = getCookie("token");
             if (token) {
@@ -118,89 +163,103 @@
                     userLoginID.style.display = 'none';
                     document.getElementById("slot-api").innerHTML = slots;
                     let dateID = document.getElementById(prevDate)
-                    dateID.style.display='block'
+                    dateID.style.display = 'block'
                     localStorage.setItem(prevDate, prevDate)
                 }).catch(function (error) {
                     console.warn(error);
                 })
             }
         }).catch(function (error) {
-                alert("invalid credentials");
-                console.warn(error);
+            alert("invalid credentials");
+            console.warn(error);
         })
     });
 
     let bookSlotURL = '/api/v1/add-booking';
     let cancelSlotURL = '/api/v1/cancel-booking';
 
-    function bookSlot(startTime,date) {
-        let body = {"start_time": startTime,"date": date};
-        let token =getCookie("token")
-        if (token) {
-            token = "Bearer " + token;
-            fetch(bookSlotURL, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-                body: JSON.stringify(body),
-            }).then(function (response) {
-                if (response.ok) {
-                    document.getElementById(date + "-" + startTime).onclick = function(){cancelSlot(startTime,date)};
-                    document.getElementById(date + "-" + startTime).className='color-input-booked'
-                    document.getElementById(date + "-" + startTime).style.background = 'green';
-                    alert("Slot booked successfully");
-                }
-            }).catch(function (error) {
-                alert("Crossed the booking time");
-                console.warn(error);
-            })
+    function bookSlot(startTime, date) {
+        if (confirm("Are you sure? The slot will be booked")) {
+            let body = {"start_time": startTime, "date": date};
+            let token = getCookie("token")
+            if (token) {
+                token = "Bearer " + token;
+                fetch(bookSlotURL, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                    },
+                    body: JSON.stringify(body),
+                }).then(function (response) {
+                    if (response.ok) {
+                        document.getElementById(date + "-" + startTime).onclick = function () {
+                            cancelSlot(startTime, date)
+                        };
+                        document.getElementById(date + "-" + startTime).className = 'color-input-booked'
+                        document.getElementById(date + "-" + startTime).style.background = 'green';
+                        alert("Slot booked successfully");
+                    }
+                }).catch(function (error) {
+                    alert("Crossed the booking time");
+                    console.warn(error);
+                })
+            }
+        } else {
+            alert("Slot could not be booked");
+            return
         }
     }
 
-    function cancelSlot(startTime,date) {
-        let hh = startTime.slice(0,2);
-        let mm = startTime.slice(3,5);
-        const slotMonth = Number(date.slice(5,7));
-        const slotDay = Number(date.slice(8,10));
-        let minutesToAdd=30;
-        let currentDate = new Date();
-        const currMonth = currentDate.getMonth()+1;
-        const currDay = currentDate.getDate();
-        let futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
-        let presentDate = new Date(currentDate.getFullYear(),currentDate.getMonth(), currentDate.getDate(), hh, mm);
-        if (currMonth==slotMonth && currDay==slotDay && presentDate<futureDate){
-            alert("The booked slot within 30 minutes can't be cancelled")
-            return;
-        }
+    function cancelSlot(startTime, date) {
+        if (confirm("Are you sure? The slot will be cancelled")) {
+            let hh = startTime.slice(0, 2);
+            let mm = startTime.slice(3, 5);
+            const slotMonth = Number(date.slice(5, 7));
+            const slotDay = Number(date.slice(8, 10));
+            let minutesToAdd = 30;
+            let currentDate = new Date();
+            const currMonth = currentDate.getMonth() + 1;
+            const currDay = currentDate.getDate();
+            let futureDate = new Date(currentDate.getTime() + minutesToAdd * 60000);
+            let presentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hh, mm);
+            if (currMonth == slotMonth && currDay == slotDay && presentDate < futureDate) {
+                alert("The booked slot within 30 minutes can't be cancelled")
+                return;
+            }
 
-        let body = {"start_time": startTime,"date": date};
-        let token =getCookie("token")
-        if (token) {
-            token = "Bearer " + token;
-            fetch(cancelSlotURL, {
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-                body: JSON.stringify(body),
-            }).then(function (response) {
-                if (response.ok) {
-                    document.getElementById(date + "-" + startTime).onclick = function(){bookSlot(startTime,date)};
-                    document.getElementById(date + "-" + startTime).className='color-input-cancelled'
-                    document.getElementById(date + "-" + startTime).style.background='yellow'
-                    alert("slot cancelled successfully");
-                }
-            }).catch(function (error) {
-                alert("crossed the cancellation time");
-                console.warn(error);
-            })
+            let body = {"start_time": startTime, "date": date};
+            let token = getCookie("token")
+            if (token) {
+                token = "Bearer " + token;
+                fetch(cancelSlotURL, {
+                    method: 'PUT',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                    },
+                    body: JSON.stringify(body),
+                }).then(function (response) {
+                    if (response.ok) {
+                        document.getElementById(date + "-" + startTime).onclick = function () {
+                            bookSlot(startTime, date)
+                        };
+                        document.getElementById(date + "-" + startTime).className = 'color-input-cancelled'
+                        document.getElementById(date + "-" + startTime).style.background = 'yellow'
+                        alert("slot cancelled successfully");
+                    }
+                }).catch(function (error) {
+                    alert("crossed the cancellation time");
+                    console.warn(error);
+                })
+            }
+        } else {
+            alert("Slot could not be cancelled");
+            return
         }
     }
 
-    function expiredSlot(startTime,date) {
+    function expiredSlot(startTime, date) {
         alert("slot has expired");
     }
 
@@ -260,7 +319,7 @@
         checkCookie();
     }
 
-    function logOut(){
+    function logOut() {
         document.cookie = "token=; expires = Thu, 01 Jan 1970 00:00:00 UTC" + ";path=/";
         window.location.reload();
     }
@@ -268,21 +327,21 @@
     let yourDate = new Date()
     yourDate = yourDate.toISOString().split('T')[0]
     let prevDate = yourDate + "-slots";
-    localStorage.setItem("prevDate",prevDate);
-    window.onload = function () {
-        let prevX = document.getElementById(prevDate);
-    };
+    localStorage.setItem("prevDate", prevDate);
 
-    function toggle(date){
+    function toggle(date) {
+        //document.querySelectorAll(".toggle-button:not([id^=date])").style.background='lightblue'
+        document.getElementById(date).style.background = 'linen';
         let customID = date + "-slots";
         let getCustomID = document.getElementById(customID)
-        if(localStorage.getItem("prevDate")){
+        if (localStorage.getItem("prevDate")) {
             let getDate = localStorage.getItem("prevDate")
-            let getDateID=document.getElementById(getDate)
-            getDateID.style.display='none';
+            let getDateID = document.getElementById(getDate)
+            getDateID.style.display = 'none';
         }
-        getCustomID.style.display='block';
-        localStorage.setItem("prevDate",customID);
+        getCustomID.style.display = 'block';
+        localStorage.setItem("prevDate", customID);
+        //document.getElementById(yourDate).style.background='lightblue';
     }
 </script>
 </body>
