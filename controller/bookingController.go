@@ -70,10 +70,25 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
+	countSlotsForAUser, err := c.service.CountSlotsForAUser(booking)
+	if err == nil {
+		if countSlotsForAUser >= 155 {
+			err = errors.New("a user can only book 155 slots")
+			return err
+		}
+	}
+	countUsersForASlot, err := c.service.CountUsersForASlot(booking)
+	if err == nil {
+		if countUsersForASlot >= 300 {
+			err = errors.New("a slot can only be booked by 300 users")
+			return err
+		}
+	}
 	_, err = c.service.BookSlot(booking)
 	booking.Status = "booked"
 	return err
 }
+
 func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	var booking entity.Booking
 

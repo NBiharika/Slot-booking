@@ -2,10 +2,13 @@ package manager
 
 import (
 	"Slot_booking/entity"
+	"fmt"
 	"gorm.io/gorm"
 )
 
 type BookingRepository interface {
+	CountSlotsForAUser(booking entity.Booking) (int64, error)
+	CountUsersForASlot(booking entity.Booking) (int64, error)
 	Create(booking entity.Booking) (int64, error)
 	FindAll() []entity.Booking
 	Cancel(booking entity.Booking) (int64, error)
@@ -20,6 +23,20 @@ func BookingRepo() BookingRepository {
 	return &BookingDB{
 		connection: dbClient,
 	}
+}
+
+func (db *BookingDB) CountSlotsForAUser(booking entity.Booking) (int64, error) {
+	var countSlotsForAUser int64
+	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", booking.UserID, "booked").Count(&countSlotsForAUser).Error
+	fmt.Println(countSlotsForAUser, err)
+	return countSlotsForAUser, err
+}
+
+func (db *BookingDB) CountUsersForASlot(booking entity.Booking) (int64, error) {
+	var countUsersForASlot int64
+	err := db.connection.Model(&entity.Booking{}).Where("slot_id=? and status=?", booking.SlotID, "booked").Count(&countUsersForASlot).Error
+	fmt.Println(countUsersForASlot, err)
+	return countUsersForASlot, err
 }
 
 func (db *BookingDB) Create(booking entity.Booking) (int64, error) {

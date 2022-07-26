@@ -16,7 +16,6 @@ func GetSlot(ctx *gin.Context) {
 		"title": "slots",
 		"slots": finalUserSlots,
 	})
-	//ctx.JSON(http.StatusOK, gin.H{"message": "check"})
 }
 
 func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
