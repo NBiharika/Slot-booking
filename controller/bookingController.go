@@ -70,17 +70,19 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
+	limitForSlotsForAUser := 5
+	limitForUsersForASlot := 5
 	countSlotsForAUser, err := c.service.CountSlotsForAUser(booking)
 	if err == nil {
-		if countSlotsForAUser >= 155 {
-			err = errors.New("a user can only book 155 slots")
+		if int(countSlotsForAUser) >= limitForSlotsForAUser {
+			err = errors.New("a user can only book " + strconv.Itoa(limitForSlotsForAUser) + " slots")
 			return err
 		}
 	}
 	countUsersForASlot, err := c.service.CountUsersForASlot(booking)
 	if err == nil {
-		if countUsersForASlot >= 30 {
-			err = errors.New("a slot can only be booked by 30 users")
+		if int(countUsersForASlot) >= limitForUsersForASlot {
+			err = errors.New("a slot can only be booked by " + strconv.Itoa(limitForUsersForASlot) + " users")
 			return err
 		}
 	}
