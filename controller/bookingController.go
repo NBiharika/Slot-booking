@@ -79,8 +79,8 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	}
 	countUsersForASlot, err := c.service.CountUsersForASlot(booking)
 	if err == nil {
-		if countUsersForASlot >= 300 {
-			err = errors.New("a slot can only be booked by 300 users")
+		if countUsersForASlot >= 30 {
+			err = errors.New("a slot can only be booked by 30 users")
 			return err
 		}
 	}
