@@ -2,7 +2,6 @@ package manager
 
 import (
 	"Slot_booking/entity"
-	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
@@ -30,7 +29,6 @@ func (db *BookingDB) CountSlotsForAUser(booking entity.Booking) (int64, error) {
 	var countSlotsForAUser int64
 	todayDate := entity.DateForSlot(time.Now())
 	err := db.connection.Model(&entity.Booking{}).Joins("INNER JOIN slot ON slot.id = bookings.slot_id").Select("slot.date, slot.start_time, bookings.user_id, bookings.status").Where(db.connection.Model(&entity.Booking{}).Where("user_id=? and status=? and date>?", booking.UserID, "booked", todayDate).Or("user_id=? and status=? and date=? and start_time>?", booking.UserID, "booked", todayDate, entity.PresentTime())).Count(&countSlotsForAUser).Error
-	fmt.Println(countSlotsForAUser, err)
 	return countSlotsForAUser, err
 }
 

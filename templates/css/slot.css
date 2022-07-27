@@ -118,11 +118,26 @@
 }
 
 .userLogout{
-    width: 25%;
-    margin-left: 530px;
+    width: 15%;
+    margin-left: 750px;
     margin-top: -20px;
     cursor: pointer;
-    padding: 15px 20px;
+    padding: 10px 10px;
+    font-weight: bold;
+    font-size: larger;
+    background: linear-gradient(to right, #ff105f, #ffad06);
+    border: 0;
+    outline: none;
+    position: absolute;
+    border-radius: 30px;
+}
+
+.booked-slots{
+    width: 15%;
+    margin-left: 500px;
+    margin-top: -20px;
+    cursor: pointer;
+    padding: 10px 10px;
     font-weight: bold;
     font-size: larger;
     background: linear-gradient(to right, #ff105f, #ffad06);
