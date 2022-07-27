@@ -107,8 +107,9 @@
                             let userLoginID = document.getElementById("user-login");
                             userLoginID.style.display = 'none';
                             document.getElementById("slot-api").innerHTML = slots;
-                            let dateID = document.getElementById(prevDate)
+                            let dateID = document.getElementById(prevDate+"-slots")
                             dateID.style.display = 'block'
+                            document.getElementById(prevDate).style.background='red'
                             localStorage.setItem(prevDate, prevDate)
                         }).catch(function (error) {
                             console.warn(error);
@@ -162,8 +163,9 @@
                     let userLoginID = document.getElementById("user-login");
                     userLoginID.style.display = 'none';
                     document.getElementById("slot-api").innerHTML = slots;
-                    let dateID = document.getElementById(prevDate)
+                    let dateID = document.getElementById(prevDate+"-slots")
                     dateID.style.display = 'block'
+                    document.getElementById(prevDate).style.background='red'
                     localStorage.setItem(prevDate, prevDate)
                 }).catch(function (error) {
                     console.warn(error);
@@ -179,7 +181,7 @@
     let cancelSlotURL = '/api/v1/cancel-booking';
 
     function bookSlot(startTime, date) {
-        if (confirm("Are you sure? The slot will be booked")) {
+        if (confirm("Book this slot?")) {
             let body = {"start_time": startTime, "date": date};
             let token = getCookie("token")
             if (token) {
@@ -212,7 +214,7 @@
     }
 
     function cancelSlot(startTime, date) {
-        if (confirm("Are you sure? The slot will be cancelled")) {
+        if (confirm("Cancel this slot?")) {
             let hh = startTime.slice(0, 2);
             let mm = startTime.slice(3, 5);
             const slotMonth = Number(date.slice(5, 7));
@@ -324,24 +326,21 @@
         window.location.reload();
     }
 
-    let yourDate = new Date()
-    yourDate = yourDate.toISOString().split('T')[0]
-    let prevDate = yourDate + "-slots";
+    let prevDate = new Date()
+    prevDate = prevDate.toISOString().split('T')[0]
     localStorage.setItem("prevDate", prevDate);
 
     function toggle(date) {
-        //document.querySelectorAll(".toggle-button:not([id^=date])").style.background='lightblue'
-        document.getElementById(date).style.background = 'linen';
-        let customID = date + "-slots";
-        let getCustomID = document.getElementById(customID)
+        document.getElementById(date).style.background = 'linear-gradient(to right, #ff105f, #ffad06)';
+        let getCustomID = document.getElementById(date + "-slots")
         if (localStorage.getItem("prevDate")) {
             let getDate = localStorage.getItem("prevDate")
-            let getDateID = document.getElementById(getDate)
+            let getDateID = document.getElementById(getDate+"-slots")
             getDateID.style.display = 'none';
+            document.getElementById(getDate).style.background='lightblue'
         }
         getCustomID.style.display = 'block';
-        localStorage.setItem("prevDate", customID);
-        //document.getElementById(yourDate).style.background='lightblue';
+        localStorage.setItem("prevDate", date);
     }
 </script>
 </body>

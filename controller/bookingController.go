@@ -10,6 +10,11 @@ import (
 )
 import "github.com/gin-gonic/gin"
 
+const (
+	limitForSlotsForAUser = 5
+	limitForUsersForASlot = 5
+)
+
 type BookingController interface {
 	FindAll() []entity.Booking
 	BookSlot(ctx *gin.Context) error
@@ -70,8 +75,6 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
-	limitForSlotsForAUser := 5
-	limitForUsersForASlot := 5
 	countSlotsForAUser, err := c.service.CountSlotsForAUser(booking)
 	if err == nil {
 		if int(countSlotsForAUser) >= limitForSlotsForAUser {
