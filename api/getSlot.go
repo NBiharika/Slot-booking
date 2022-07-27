@@ -3,7 +3,6 @@ package api
 import (
 	"Slot_booking/entity"
 	"Slot_booking/start_up"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -36,7 +35,6 @@ func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 		dateStr := slots[i].Date + " " + slots[i].StartTime
 		loc, _ := time.LoadLocation("Asia/Kolkata")
 		slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
-		fmt.Println(slotDate)
 
 		if slotDate.Before(todayTime) {
 			m[slots[i].Date][slots[i].ID] = map[string]interface{}{
