@@ -202,7 +202,7 @@
                         document.getElementById(date + "-" + startTime).style.background = 'green';
                         alert("Slot booked successfully");
                     }else{
-                        alert("A user can only book 5 slots");
+                        alert("Reached the booking limit");
                     }
                 }).catch(function (error) {
                     alert("Crossed the booking time");
