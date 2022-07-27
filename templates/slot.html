@@ -14,7 +14,7 @@
             {{range $value}}
                 {{if eq .status "expired"}}
                     <button id="{{$key}}-{{.startTime}}" type="button" class="color-input-expired"
-                            onClick="expiredSlot({{.startTime}},{{$key}})">{{.startTime}}</button>
+                            onClick="expiredSlot()">{{.startTime}}</button>
                 {{else if eq .status "booked"}}
                     <button id="{{$key}}-{{.startTime}}" type="button" class="color-input-booked"
                             onClick="cancelSlot({{.startTime}},{{$key}})">{{.startTime}}</button>
