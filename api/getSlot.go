@@ -39,9 +39,10 @@ func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 		dateDay, _ := strconv.Atoi(slots[i].Date[8:])
 		slotTimeH, _ := strconv.Atoi(slots[i].StartTime[:2])
 		slotTimeM, _ := strconv.Atoi(slots[i].StartTime[3:])
-		slotDate := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
-
-		if slotDate.Before(todayTime) {
+		//slotTimeH&M := strings.Split(slots[i].StartTime, ":")
+		//slotDate := strings.Split(slots[i].Date, "-")
+		slotTime := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
+		if slotTime.Before(todayTime) {
 			m[slots[i].Date][slots[i].ID] = map[string]interface{}{
 				"startTime": slots[i].StartTime,
 				"status":    "expired",
@@ -54,14 +55,15 @@ func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 		}
 	}
 	for i := 0; i < len(userSlots); i++ {
-		slotTimeH, _ := strconv.Atoi(userSlots[i].StartTime[:2])
-		slotTimeM, _ := strconv.Atoi(userSlots[i].StartTime[3:])
 		dateYear, _ := strconv.Atoi(userSlots[i].Date[0:4])
 		dateMonth, _ := strconv.Atoi(userSlots[i].Date[5:7])
 		dateDay, _ := strconv.Atoi(userSlots[i].Date[8:])
-		slotDate := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
+		slotTimeH, _ := strconv.Atoi(userSlots[i].StartTime[:2])
+		slotTimeM, _ := strconv.Atoi(userSlots[i].StartTime[3:])
 
-		if slotDate.After(todayTime) {
+		slotTime := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
+
+		if slotTime.After(todayTime) {
 			m[userSlots[i].Date][userSlots[i].ID] = map[string]interface{}{
 				"startTime": userSlots[i].StartTime,
 				"status":    "booked",

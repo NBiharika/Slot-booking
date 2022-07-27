@@ -30,9 +30,9 @@ func GetUserBookedSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 		dateYear, _ := strconv.Atoi(userSlots[i].Date[0:4])
 		dateMonth, _ := strconv.Atoi(userSlots[i].Date[5:7])
 		dateDay, _ := strconv.Atoi(userSlots[i].Date[8:])
-		slotDate := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
+		slotTime := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
 
-		if slotDate.After(time.Now()) {
+		if slotTime.After(time.Now()) {
 			m[userSlots[i].Date][userSlots[i].ID] = map[string]interface{}{
 				"startTime": userSlots[i].StartTime,
 				"status":    "booked",

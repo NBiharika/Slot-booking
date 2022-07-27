@@ -5,7 +5,6 @@ import (
 
 	"fmt"
 	"math"
-	"strconv"
 	"time"
 )
 
@@ -32,21 +31,6 @@ func PresentTime() string {
 	now := time.Now()
 	formattedTime := now.Format(StartTimeFormat)
 	return formattedTime
-}
-
-func PresentTimePlus30minutes() string {
-	//now := time.Now()
-	//PresentTimePlus30minutes := now.Add(time.Minute * 30)
-	presentTime := PresentTime()
-	presentTimeH, _ := strconv.Atoi(presentTime[:2])
-	presentTimeM, _ := strconv.Atoi(presentTime[3:])
-	if presentTimeM < 30 {
-		presentTimeM = presentTimeM + 30
-	} else {
-		presentTimeH = presentTimeH + 1
-		presentTimeM = presentTimeM - 30
-	}
-	return strconv.Itoa(presentTimeH) + ":" + strconv.Itoa(presentTimeM)
 }
 
 func StartTimeOfSlot(j int) string {

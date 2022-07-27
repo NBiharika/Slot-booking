@@ -16,4 +16,6 @@ func InitializeDB() {
 	}
 	dbClient = db
 	//dbClient.AutoMigrate(&entity.Booking{})
+	//dbClient.AutoMigrate(&entity.User{})
+	//dbClient.AutoMigrate(&entity.Slot{})
 }

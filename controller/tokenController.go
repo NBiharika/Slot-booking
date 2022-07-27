@@ -27,9 +27,6 @@ func NewTokenController(service service.UserService) TokenController {
 
 func (c *tokenRequest) GenerateToken(ctx *gin.Context) (string, error, int) {
 	var userRequest tokenRequest
-
-	//userRequest.Email = ctx.PostForm("email")
-	//userRequest.Password = ctx.PostForm("password")
 	err := ctx.ShouldBindJSON(&userRequest)
 	if err != nil {
 		return "", err, http.StatusBadRequest
