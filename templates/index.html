@@ -201,6 +201,8 @@
                         document.getElementById(date + "-" + startTime).className = 'color-input-booked'
                         document.getElementById(date + "-" + startTime).style.background = 'green';
                         alert("Slot booked successfully");
+                    }else{
+                        alert("A user can only book 5 slots");
                     }
                 }).catch(function (error) {
                     alert("Crossed the booking time");
@@ -215,20 +217,6 @@
 
     function cancelSlot(startTime, date) {
         if (confirm("Cancel this slot?")) {
-            let hh = startTime.slice(0, 2);
-            let mm = startTime.slice(3, 5);
-            const slotMonth = Number(date.slice(5, 7));
-            const slotDay = Number(date.slice(8, 10));
-            let minutesToAdd = 30;
-            let currentDate = new Date();
-            const currMonth = currentDate.getMonth() + 1;
-            const currDay = currentDate.getDate();
-            let futureDate = new Date(currentDate.getTime() + minutesToAdd * 60000);
-            let presentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hh, mm);
-            if (currMonth == slotMonth && currDay == slotDay && presentDate < futureDate) {
-                alert("The booked slot within 30 minutes can't be cancelled")
-                return;
-            }
 
             let body = {"start_time": startTime, "date": date};
             let token = getCookie("token")
@@ -249,6 +237,8 @@
                         document.getElementById(date + "-" + startTime).className = 'color-input-cancelled'
                         document.getElementById(date + "-" + startTime).style.background = 'yellow'
                         alert("slot cancelled successfully");
+                    }else{
+                        alert("The booked slot within the next 30 minutes can't be cancelled")
                     }
                 }).catch(function (error) {
                     alert("crossed the cancellation time");

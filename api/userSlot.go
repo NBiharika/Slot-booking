@@ -1,7 +1,6 @@
 package api
 
 import (
-	"Slot_booking/entity"
 	"Slot_booking/start_up"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -28,19 +27,12 @@ func GetUserBookedSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 		}
 		slotTimeH, _ := strconv.Atoi(userSlots[i].StartTime[:2])
 		slotTimeM, _ := strconv.Atoi(userSlots[i].StartTime[3:])
-		presentTimeH, _ := strconv.Atoi(entity.PresentTime()[:2])
-		presentTimeM, _ := strconv.Atoi(entity.PresentTime()[3:])
-		todayDateMonth, _ := strconv.Atoi(entity.DateForSlot(time.Now())[5:7])
+		dateYear, _ := strconv.Atoi(userSlots[i].Date[0:4])
 		dateMonth, _ := strconv.Atoi(userSlots[i].Date[5:7])
-		todayDateDay, _ := strconv.Atoi(entity.DateForSlot(time.Now())[8:])
 		dateDay, _ := strconv.Atoi(userSlots[i].Date[8:])
+		slotDate := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
 
-		if (todayDateMonth == dateMonth && todayDateDay == dateDay) && (presentTimeH < slotTimeH || (presentTimeH == slotTimeH && presentTimeM < slotTimeM)) {
-			m[userSlots[i].Date][userSlots[i].ID] = map[string]interface{}{
-				"startTime": userSlots[i].StartTime,
-				"status":    "booked",
-			}
-		} else if (todayDateMonth < dateMonth) || (todayDateMonth == dateMonth && todayDateDay < dateDay) {
+		if slotDate.After(time.Now()) {
 			m[userSlots[i].Date][userSlots[i].ID] = map[string]interface{}{
 				"startTime": userSlots[i].StartTime,
 				"status":    "booked",

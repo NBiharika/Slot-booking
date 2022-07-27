@@ -57,17 +57,14 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 		return err
 	}
 
+	dateYear, _ := strconv.Atoi(date[0:4])
+	dateMonth, _ := strconv.Atoi(date[5:7])
+	dateDay, _ := strconv.Atoi(date[8:])
 	slotTimeH, _ := strconv.Atoi(slot.StartTime[:2])
 	slotTimeM, _ := strconv.Atoi(slot.StartTime[3:])
-	presentTimeH, _ := strconv.Atoi(entity.PresentTime()[:2])
-	presentTimeM, _ := strconv.Atoi(entity.PresentTime()[3:])
-	todayDate := entity.DateForSlot(time.Now())
-	todayDateMonth, _ := strconv.Atoi(todayDate[5:7])
-	dateMonth, _ := strconv.Atoi(date[5:7])
-	todayDateDay, _ := strconv.Atoi(todayDate[8:])
-	dateDay, _ := strconv.Atoi(date[8:])
+	slotDate := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
 
-	if (todayDateMonth == dateMonth && todayDateDay == dateDay) && (slotTimeH < presentTimeH || (slotTimeH == presentTimeH && slotTimeM < presentTimeM)) {
+	if slotDate.Before(time.Now()) {
 		err = errors.New("crossed the booking time")
 		return err
 	}
@@ -118,17 +115,15 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 
+	dateYear, _ := strconv.Atoi(date[0:4])
+	dateMonth, _ := strconv.Atoi(date[5:7])
+	dateDay, _ := strconv.Atoi(date[8:])
 	slotTimeH, _ := strconv.Atoi(slot.StartTime[:2])
 	slotTimeM, _ := strconv.Atoi(slot.StartTime[3:])
-	presentTimeH, _ := strconv.Atoi(entity.PresentTimePlus30minutes()[:2])
-	presentTimeM, _ := strconv.Atoi(entity.PresentTimePlus30minutes()[3:])
-	todayDate := entity.DateForSlot(time.Now())
-	todayDateMonth, _ := strconv.Atoi(todayDate[5:7])
-	dateMonth, _ := strconv.Atoi(date[5:7])
-	todayDateDay, _ := strconv.Atoi(todayDate[8:])
-	dateDay, _ := strconv.Atoi(date[8:])
+	slotDate := time.Date(dateYear, time.Month(dateMonth), dateDay, slotTimeH, slotTimeM, 0, 0, time.Local)
+	todayTimePlus30Minutes := time.Now().Add(30 * time.Minute)
 
-	if (todayDateMonth == dateMonth && todayDateDay == dateDay) && (slotTimeH < presentTimeH || (slotTimeH == presentTimeH && slotTimeM < presentTimeM)) {
+	if slotDate.Before(todayTimePlus30Minutes) {
 		err = errors.New("crossed the cancellation time")
 		return "", err
 	}
