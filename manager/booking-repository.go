@@ -7,8 +7,8 @@ import (
 )
 
 type BookingRepository interface {
-	CountSlotsForAUser(booking entity.Booking) (int64, error)
-	CountUsersForASlot(booking entity.Booking) (int64, error)
+	CountAllBookedSlotsOfAUser(booking entity.Booking) (int64, error)
+	CountTotalUsersBookingASlot(booking entity.Booking) (int64, error)
 	Create(booking entity.Booking) (int64, error)
 	FindAll() []entity.Booking
 	Cancel(booking entity.Booking) (int64, error)
@@ -25,14 +25,14 @@ func BookingRepo() BookingRepository {
 	}
 }
 
-func (db *BookingDB) CountSlotsForAUser(booking entity.Booking) (int64, error) {
+func (db *BookingDB) CountAllBookedSlotsOfAUser(booking entity.Booking) (int64, error) {
 	var countSlotsForAUser int64
 	todayDate := entity.DateForSlot(time.Now())
 	err := db.connection.Model(&entity.Booking{}).Joins("INNER JOIN slot ON slot.id = bookings.slot_id").Select("slot.date, slot.start_time, bookings.user_id, bookings.status").Where(db.connection.Model(&entity.Booking{}).Where("user_id=? and status=? and date>?", booking.UserID, "booked", todayDate).Or("user_id=? and status=? and date=? and start_time>?", booking.UserID, "booked", todayDate, entity.PresentTime())).Count(&countSlotsForAUser).Error
 	return countSlotsForAUser, err
 }
 
-func (db *BookingDB) CountUsersForASlot(booking entity.Booking) (int64, error) {
+func (db *BookingDB) CountTotalUsersBookingASlot(booking entity.Booking) (int64, error) {
 	var countUsersForASlot int64
 	err := db.connection.Model(&entity.Booking{}).Where("slot_id=? and status=?", booking.SlotID, "booked").Count(&countUsersForASlot).Error
 	return countUsersForASlot, err
@@ -49,10 +49,6 @@ func (db *BookingDB) Create(booking entity.Booking) (int64, error) {
 		}
 	}
 	resp = db.connection.Create(&booking)
-	//resp := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Save(&booking)
-	//if resp.Error != nil {
-	//	booking.Status = "booked"
-	//}
 	return resp.RowsAffected, resp.Error
 }
 

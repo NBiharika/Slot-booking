@@ -6,8 +6,8 @@ import (
 )
 
 type BookingService interface {
-	CountSlotsForAUser(booking entity.Booking) (int64, error)
-	CountUsersForASlot(booking entity.Booking) (int64, error)
+	CountAllBookedSlotsOfAUser(booking entity.Booking) (int64, error)
+	CountTotalUsersBookingASlot(booking entity.Booking) (int64, error)
 	BookSlot(booking entity.Booking) (int64, error)
 	FindAll() []entity.Booking
 	CancelBooking(booking entity.Booking) (int64, error)
@@ -24,12 +24,12 @@ func NewService(repo manager.BookingRepository) BookingService {
 	}
 }
 
-func (service *bookingService) CountSlotsForAUser(booking entity.Booking) (int64, error) {
-	return service.bookings.CountSlotsForAUser(booking)
+func (service *bookingService) CountAllBookedSlotsOfAUser(booking entity.Booking) (int64, error) {
+	return service.bookings.CountAllBookedSlotsOfAUser(booking)
 }
 
-func (service *bookingService) CountUsersForASlot(booking entity.Booking) (int64, error) {
-	return service.bookings.CountUsersForASlot(booking)
+func (service *bookingService) CountTotalUsersBookingASlot(booking entity.Booking) (int64, error) {
+	return service.bookings.CountTotalUsersBookingASlot(booking)
 }
 
 func (service *bookingService) BookSlot(booking entity.Booking) (int64, error) {

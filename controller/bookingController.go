@@ -11,8 +11,8 @@ import (
 import "github.com/gin-gonic/gin"
 
 const (
-	limitForSlotsForAUser = 5
-	limitForUsersForASlot = 5
+	limitForBookedSlotsOfAUser  = 5
+	limitOfAllUsersBookingASlot = 5
 )
 
 type BookingController interface {
@@ -68,17 +68,17 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
-	countSlotsForAUser, err := c.service.CountSlotsForAUser(booking)
+	countAllBookedSlotsOfAUser, err := c.service.CountAllBookedSlotsOfAUser(booking)
 	if err == nil {
-		if int(countSlotsForAUser) >= limitForSlotsForAUser {
-			err = errors.New("a user can only book " + strconv.Itoa(limitForSlotsForAUser) + " slots")
+		if int(countAllBookedSlotsOfAUser) >= limitForBookedSlotsOfAUser {
+			err = errors.New("a user can only book " + strconv.Itoa(limitForBookedSlotsOfAUser) + " slots")
 			return err
 		}
 	}
-	countUsersForASlot, err := c.service.CountUsersForASlot(booking)
+	countTotalUsersBookingASlot, err := c.service.CountTotalUsersBookingASlot(booking)
 	if err == nil {
-		if int(countUsersForASlot) >= limitForUsersForASlot {
-			err = errors.New("a slot can only be booked by " + strconv.Itoa(limitForUsersForASlot) + " users")
+		if int(countTotalUsersBookingASlot) >= limitOfAllUsersBookingASlot {
+			err = errors.New("a slot can only be booked by " + strconv.Itoa(limitOfAllUsersBookingASlot) + " users")
 			return err
 		}
 	}
