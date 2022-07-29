@@ -3,6 +3,7 @@ package cache
 import (
 	"Slot_booking/entity"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -28,6 +29,7 @@ func (cache *redisCache) SetSlot(ctx *gin.Context, key string, slot []entity.Slo
 	}
 
 	client.Set(ctx, key, jsonData, OneMonth)
+	fmt.Println(client, key, string(jsonData))
 }
 
 func (cache *redisCache) GetSlot(ctx *gin.Context, key string) ([]entity.Slot, error) {
@@ -42,6 +44,5 @@ func (cache *redisCache) GetSlot(ctx *gin.Context, key string) ([]entity.Slot, e
 	if err != nil {
 		panic(err)
 	}
-
 	return slots, err
 }

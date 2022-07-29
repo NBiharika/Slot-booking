@@ -23,13 +23,13 @@ func NewRedisCache(host string, db int, exp time.Duration) UserCache {
 
 func (cache *redisCache) SetUser(ctx *gin.Context, key string, user entity.User) {
 	client := cache.getClient()
-
+	fmt.Println("CheckKey", key)
 	jsonData, err := json.Marshal(user)
 	if err != nil {
 		panic(err)
 	}
-
 	client.Set(ctx, key, jsonData, OneMonth)
+	fmt.Println(client, string(jsonData))
 }
 
 func (cache *redisCache) GetUser(ctx *gin.Context, key string) (entity.User, error) {

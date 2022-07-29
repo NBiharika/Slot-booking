@@ -51,7 +51,7 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 		finalSlots = append(finalSlots, slot)
 	}
 	date := slots[0].Date
-	key := fmt.Sprintf("slots_%v_%v", date, slots[0].ID)
+	key := fmt.Sprintf("slots_%v", date)
 	c.slotCache.SetSlot(ctx, key, slots)
 	return finalSlots
 }
@@ -75,7 +75,6 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 		slot[i].StartTime = entity.StartTimeOfSlot(i)
 	}
 	key := fmt.Sprintf("slots_%v", slot[0].Date)
-	fmt.Println("slotKey", key)
 	c.slotCache.SetSlot(ctx, key, slot)
 
 	_, err = c.service.AddSlot(slot)

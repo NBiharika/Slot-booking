@@ -28,12 +28,12 @@ func Initialize() {
 	manager.InitializeDB()
 	slotRepository = manager.SlotRepo()
 	slotService = service.NewSlotService(slotRepository)
-	slotCache = cache.NewRedisCacheSlot("localhost:8080", 20, cache.OneMonth)
+	slotCache = cache.NewRedisCacheSlot("127.0.0.1:6379", 10, cache.OneMonth)
 	SlotController = controller.NewSlotController(slotService, slotCache)
 
 	userRepository = manager.UserRepo()
 	userService = service.NewUserService(userRepository)
-	userCache = cache.NewRedisCache("localhost:8080", 20, cache.OneMonth)
+	userCache = cache.NewRedisCache("127.0.0.1:6379", 10, cache.OneMonth)
 	UserController = controller.NewUserController(userService, userCache)
 	TokenController = controller.NewTokenController(userService)
 
