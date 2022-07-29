@@ -13,8 +13,8 @@ import (
 import "github.com/gin-gonic/gin"
 
 const (
-	limitForBookedSlotsOfAUser  = 5
-	limitOfAllUsersBookingASlot = 5
+	limitForBookedSlotsOfAUserForADay = 5
+	limitOfAllUsersBookingASlot       = 5
 )
 
 type BookingController interface {
@@ -78,12 +78,12 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
-	countAllBookedSlotsOfAUser, err := c.service.CountAllBookedSlotsOfAUser(booking)
+	countAllBookedSlotsOfAUserForADay, err := c.service.CountAllBookedSlotsOfAUserForADay(booking, date)
 	if err != nil {
 		return err
 	} else {
-		if int(countAllBookedSlotsOfAUser) >= limitForBookedSlotsOfAUser {
-			err = errors.New("a user can only book " + strconv.Itoa(limitForBookedSlotsOfAUser) + " slots")
+		if int(countAllBookedSlotsOfAUserForADay) >= limitForBookedSlotsOfAUserForADay {
+			err = errors.New("a user can only book " + strconv.Itoa(limitForBookedSlotsOfAUserForADay) + " slots")
 			return err
 		}
 	}
