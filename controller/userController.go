@@ -34,7 +34,6 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	jwtData := userReq.(*utils.JWTClaim)
 
 	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
-	fmt.Println("key:", key)
 	user, err := c.userCache.GetUser(ctx, key)
 	if err == nil {
 		return user, err, http.StatusOK
@@ -69,8 +68,6 @@ func (c *userController) AddUser(ctx *gin.Context) (error, int) {
 		return err, http.StatusInternalServerError
 	}
 	key := fmt.Sprintf("user_data_%v", user.ID)
-	fmt.Println(user.ID)
 	c.userCache.SetUser(ctx, key, user)
-	fmt.Println("key1:", key)
 	return nil, http.StatusOK
 }

@@ -2,7 +2,6 @@ package cache
 
 import (
 	"Slot_booking/entity"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
 	"time"
@@ -23,13 +22,11 @@ func NewRedisCache(host string, db int, exp time.Duration) UserCache {
 
 func (cache *redisCache) SetUser(ctx *gin.Context, key string, user entity.User) {
 	client := cache.getClient()
-	fmt.Println("CheckKey", key)
 	jsonData, err := json.Marshal(user)
 	if err != nil {
 		panic(err)
 	}
 	client.Set(ctx, key, jsonData, OneMonth)
-	fmt.Println(client, string(jsonData))
 }
 
 func (cache *redisCache) GetUser(ctx *gin.Context, key string) (entity.User, error) {
@@ -37,7 +34,6 @@ func (cache *redisCache) GetUser(ctx *gin.Context, key string) (entity.User, err
 
 	val, err := client.Get(ctx, key).Result()
 	if err != nil {
-		fmt.Println(err)
 		return entity.User{}, err
 	}
 
@@ -46,6 +42,5 @@ func (cache *redisCache) GetUser(ctx *gin.Context, key string) (entity.User, err
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("1111111111", users)
 	return users, err
 }

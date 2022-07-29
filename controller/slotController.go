@@ -74,12 +74,12 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 		slot[i].Date = date
 		slot[i].StartTime = entity.StartTimeOfSlot(i)
 	}
-	key := fmt.Sprintf("slots_%v", slot[0].Date)
-	c.slotCache.SetSlot(ctx, key, slot)
 
-	_, err = c.service.AddSlot(slot)
+	slot, err = c.service.AddSlot(slot)
 	if err != nil {
 		return err
 	}
+	key := fmt.Sprintf("slots_%v", slot[0].Date)
+	c.slotCache.SetSlot(ctx, key, slot)
 	return nil
 }

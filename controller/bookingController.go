@@ -51,10 +51,8 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	jwtData := userReq.(*utils.JWTClaim)
 
 	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
-	fmt.Println("key:", key)
 	user, err := c.userCache.GetUser(ctx, key)
 	if err != nil {
-		fmt.Println("check")
 		user, err = c.userService.GetUser(jwtData.User.ID)
 		c.userCache.SetUser(ctx, key, user)
 	}
@@ -112,7 +110,6 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
 	user, err := c.userCache.GetUser(ctx, key)
 	if err != nil {
-		fmt.Println("check1")
 		user, err = c.userService.GetUser(jwtData.User.ID)
 		c.userCache.SetUser(ctx, key, user)
 	}
