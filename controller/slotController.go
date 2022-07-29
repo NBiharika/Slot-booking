@@ -1,30 +1,59 @@
 package controller
 
 import (
+	"Slot_booking/cache"
 	"Slot_booking/entity"
 	"Slot_booking/service"
 	"Slot_booking/utils"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type SlotController interface {
-	FindAll(startDate string, endDate string) []entity.Slot
+	FindAll(ctx *gin.Context, startDate time.Time, endTime time.Time) []entity.Slot
 	AddSlot(ctx *gin.Context) error
 }
 
 type slotController struct {
-	service service.SlotService
+	service   service.SlotService
+	slotCache cache.SlotCache
 }
 
-func NewSlotController(service service.SlotService) SlotController {
+func NewSlotController(service service.SlotService, cache cache.SlotCache) SlotController {
 	return &slotController{
-		service: service,
+		service:   service,
+		slotCache: cache,
 	}
 }
 
-func (c *slotController) FindAll(startDate string, endDate string) []entity.Slot {
-	return c.service.FindAll(startDate, endDate)
+func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime time.Time) []entity.Slot {
+	finalSlots := make([]entity.Slot, 0)
+	dates := make([]string, 0)
+
+	for date := todayTime; date.After(endTime) == false; date = date.Add(24 * time.Hour) {
+		formatDate := date.Format("2006-01-02")
+
+		key := fmt.Sprintf("slots_%v", formatDate)
+		slots, err := c.slotCache.GetSlot(ctx, key)
+		if err == nil {
+			for _, slot := range slots {
+				finalSlots = append(finalSlots, slot)
+			}
+			return finalSlots
+		}
+		dates = append(dates, formatDate)
+	}
+
+	slots, _ := c.service.FindAll(dates)
+	for _, slot := range slots {
+		finalSlots = append(finalSlots, slot)
+	}
+	date := slots[0].Date
+	key := fmt.Sprintf("slots_%v_%v", date, slots[0].ID)
+	c.slotCache.SetSlot(ctx, key, slots)
+	return finalSlots
 }
 
 func (c *slotController) AddSlot(ctx *gin.Context) error {
@@ -41,10 +70,13 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 
 	slot := make([]entity.Slot, 24)
 
-	for i := 0; i < 24; i++ {
+	for i := range [24]int{} {
 		slot[i].Date = date
 		slot[i].StartTime = entity.StartTimeOfSlot(i)
 	}
+	key := fmt.Sprintf("slots_%v", slot[0].Date)
+	fmt.Println("slotKey", key)
+	c.slotCache.SetSlot(ctx, key, slot)
 
 	_, err = c.service.AddSlot(slot)
 	if err != nil {

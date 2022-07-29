@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"Slot_booking/cache"
 	"Slot_booking/entity"
 	"Slot_booking/service"
 	"Slot_booking/utils"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -26,13 +28,15 @@ type Controller struct {
 	service     service.BookingService
 	slotService service.SlotService
 	userService service.UserService
+	userCache   cache.UserCache
 }
 
-func New(service service.BookingService, slotService service.SlotService, userService service.UserService) BookingController {
+func New(service service.BookingService, slotService service.SlotService, userService service.UserService, cache cache.UserCache) BookingController {
 	return &Controller{
 		service:     service,
 		slotService: slotService,
 		userService: userService,
+		userCache:   cache,
 	}
 }
 
@@ -45,7 +49,15 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
-	user, err := c.userService.GetUser(jwtData.User.ID)
+
+	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
+	fmt.Println("key:", key)
+	user, err := c.userCache.GetUser(ctx, key)
+	if err != nil {
+		fmt.Println("check")
+		user, err = c.userService.GetUser(jwtData.User.ID)
+		c.userCache.SetUser(ctx, key, user)
+	}
 
 	m, err := utils.ReadRequestBody(ctx)
 
@@ -69,14 +81,18 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.SlotID = slot.ID
 
 	countAllBookedSlotsOfAUser, err := c.service.CountAllBookedSlotsOfAUser(booking)
-	if err == nil {
+	if err != nil {
+		return err
+	} else {
 		if int(countAllBookedSlotsOfAUser) >= limitForBookedSlotsOfAUser {
 			err = errors.New("a user can only book " + strconv.Itoa(limitForBookedSlotsOfAUser) + " slots")
 			return err
 		}
 	}
 	countTotalUsersBookingASlot, err := c.service.CountTotalUsersBookingASlot(booking)
-	if err == nil {
+	if err != nil {
+		return err
+	} else {
 		if int(countTotalUsersBookingASlot) >= limitOfAllUsersBookingASlot {
 			err = errors.New("a slot can only be booked by " + strconv.Itoa(limitOfAllUsersBookingASlot) + " users")
 			return err
@@ -92,8 +108,14 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
-	user, err := c.userService.GetUser(jwtData.User.ID)
-	booking.UserID = user.ID
+
+	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
+	user, err := c.userCache.GetUser(ctx, key)
+	if err != nil {
+		fmt.Println("check1")
+		user, err = c.userService.GetUser(jwtData.User.ID)
+		c.userCache.SetUser(ctx, key, user)
+	}
 
 	m, err := utils.ReadRequestBody(ctx)
 
@@ -121,6 +143,7 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 	booking.Status = "cancelled"
+	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 	rowsAffected, err := c.service.CancelBooking(booking)
 	if err != nil {

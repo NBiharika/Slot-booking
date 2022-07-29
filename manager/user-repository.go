@@ -6,7 +6,7 @@ import (
 )
 
 type UserRepository interface {
-	Create(user entity.User) error
+	Create(user entity.User) (entity.User, error)
 	Find(userID uint64) (entity.User, error)
 	FindUsingEmail(user entity.User) (entity.User, error)
 }
@@ -21,9 +21,9 @@ func UserRepo() UserRepository {
 	}
 }
 
-func (db *UserDB) Create(user entity.User) error {
+func (db *UserDB) Create(user entity.User) (entity.User, error) {
 	err := db.connection.Create(&user).Error
-	return err
+	return user, err
 }
 
 func (db *UserDB) Find(userID uint64) (entity.User, error) {
