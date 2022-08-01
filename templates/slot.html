@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="css/slot.css">
+</head>
+<body>
+<div id="userSlot-api"></div>
+<div class="userLogin" id="slot-booking">
+    {{range $key, $value := .slots}}
+        <button type="button" class="toggle-button" id="{{$key}}" onclick="toggle(this.id)">{{$key}}</button>
+    {{end}}
+    {{range $key,$value := .slots}}
+        <div class="row" id="{{$key}}-slots">
+            {{range $value}}
+                {{if eq .status "expired"}}
+                    <button id="{{$key}}-{{.startTime}}" type="button" class="color-input-expired"
+                            onClick="expiredSlot()">{{.startTime}}</button>
+                {{else if eq .status "booked"}}
+                    <button id="{{$key}}-{{.startTime}}" type="button" class="color-input-booked"
+                            onClick="cancelSlot({{.startTime}},{{$key}})">{{.startTime}}</button>
+                {{else if eq .status "cancelled"}}
+                    <button id="{{$key}}-{{.startTime}}" type="button" class="color-input-cancelled"
+                            onClick="bookSlot({{.startTime}},{{$key}})">{{.startTime}}</button>
+                {{end}}
+            {{end}}
+        </div>
+    {{end}}
+    <button id="getUserSlots-api" class="booked-slots" onClick="getUserSlots()">All Booked Slots</button>
+    <button id="logOut" class="userLogout" onClick="logOut()">Log Out</button>
+</div>
+</body>
+</html>

@@ -3,7 +3,6 @@ package utils
 import (
 	"Slot_booking/entity"
 	"errors"
-	"fmt"
 	"github.com/golang-jwt/jwt"
 	"strings"
 	"time"
@@ -45,6 +44,6 @@ func ValidateToken(signedToken string) (claims *JWTClaim, err error) {
 	if claims.ExpiresAt < time.Now().Local().Unix() {
 		err = errors.New("token expired")
 	}
-	fmt.Println("claims:", claims)
+
 	return claims, err
 }

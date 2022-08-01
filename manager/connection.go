@@ -15,4 +15,7 @@ func InitializeDB() {
 		log.Println("Error", err)
 	}
 	dbClient = db
+	//dbClient.AutoMigrate(&entity.Booking{})
+	//dbClient.AutoMigrate(&entity.User{})
+	//dbClient.AutoMigrate(&entity.Slot{})
 }

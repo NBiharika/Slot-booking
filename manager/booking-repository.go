@@ -2,12 +2,14 @@ package manager
 
 import (
 	"Slot_booking/entity"
-	"fmt"
 	"gorm.io/gorm"
+	"time"
 )
 
 type BookingRepository interface {
-	Create(booking entity.Booking) error
+	CountAllBookedSlotsOfAUser(booking entity.Booking) (int64, error)
+	CountTotalUsersBookingASlot(booking entity.Booking) (int64, error)
+	Create(booking entity.Booking) (int64, error)
 	FindAll() []entity.Booking
 	Cancel(booking entity.Booking) (int64, error)
 	GetUserBookings(userID uint64) ([]entity.Booking, error)
@@ -23,10 +25,31 @@ func BookingRepo() BookingRepository {
 	}
 }
 
-func (db *BookingDB) Create(booking entity.Booking) error {
-	//db.connection.AutoMigrate(&entity.Booking{})
-	err := db.connection.Create(&booking).Error
-	return err
+func (db *BookingDB) CountAllBookedSlotsOfAUser(booking entity.Booking) (int64, error) {
+	var countSlotsForAUser int64
+	todayDate := entity.DateForSlot(time.Now())
+	err := db.connection.Model(&entity.Booking{}).Joins("INNER JOIN slot ON slot.id = bookings.slot_id").Select("slot.date, slot.start_time, bookings.user_id, bookings.status").Where(db.connection.Model(&entity.Booking{}).Where("user_id=? and status=? and date>?", booking.UserID, "booked", todayDate).Or("user_id=? and status=? and date=? and start_time>?", booking.UserID, "booked", todayDate, entity.PresentTime())).Count(&countSlotsForAUser).Error
+	return countSlotsForAUser, err
+}
+
+func (db *BookingDB) CountTotalUsersBookingASlot(booking entity.Booking) (int64, error) {
+	var countUsersForASlot int64
+	err := db.connection.Model(&entity.Booking{}).Where("slot_id=? and status=?", booking.SlotID, "booked").Count(&countUsersForASlot).Error
+	return countUsersForASlot, err
+}
+
+func (db *BookingDB) Create(booking entity.Booking) (int64, error) {
+	var resp *gorm.DB
+	response := db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=? and status=?", booking.UserID, booking.SlotID, "cancelled").Find(&booking)
+	if response.Error == nil {
+		booking.Status = "booked"
+		resp = db.connection.Model(&entity.Booking{}).Where("user_id=? and slot_id=?", booking.UserID, booking.SlotID).Update("status", booking.Status)
+		if resp.RowsAffected != 0 {
+			return resp.RowsAffected, nil
+		}
+	}
+	resp = db.connection.Create(&booking)
+	return resp.RowsAffected, resp.Error
 }
 
 func (db *BookingDB) Cancel(booking entity.Booking) (int64, error) {
@@ -36,8 +59,8 @@ func (db *BookingDB) Cancel(booking entity.Booking) (int64, error) {
 
 func (db *BookingDB) GetUserBookings(userID uint64) ([]entity.Booking, error) {
 	var booked []entity.Booking
-	err := db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
-	fmt.Println("check:", err)
+	var err error
+	err = db.connection.Model(&entity.Booking{}).Where("user_id=? and status=?", userID, "booked").Find(&booked).Error
 	return booked, err
 }
 

@@ -22,7 +22,8 @@ func NewUserService(repo manager.UserRepository) UserService {
 }
 
 func (service *userService) AddUser(user entity.User) (entity.User, error) {
-	err := service.user.Create(user)
+	err := service.user.
+		Create(user)
 	return user, err
 }
 

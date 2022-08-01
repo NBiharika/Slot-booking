@@ -25,10 +25,9 @@ func NewTokenController(service service.UserService) TokenController {
 	}
 }
 
-func (c *tokenRequest) GenerateToken(context *gin.Context) (string, error, int) {
+func (c *tokenRequest) GenerateToken(ctx *gin.Context) (string, error, int) {
 	var userRequest tokenRequest
-
-	err := context.ShouldBindJSON(&userRequest)
+	err := ctx.ShouldBindJSON(&userRequest)
 	if err != nil {
 		return "", err, http.StatusBadRequest
 	}

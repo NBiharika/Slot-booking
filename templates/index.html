@@ -1,0 +1,369 @@
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<div id="slot-api"></div>
+<div class="userLogin" id="user-login">
+    <div class="form-box">
+        <div class="button-box">
+            <div id="btn"></div>
+            <button type="button" class="toggle-btn" onclick="login()">Log In</button>
+            <button type="button" class="toggle-btn1" onclick="register()">Register</button>
+        </div>
+        <form id="login" class="input-group" onLoad="checkCookie()">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="input-field" name="email" placeholder="Enter Email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" class="input-field" name="password" placeholder="Enter Password"
+                   required>
+            <button type="submit" class="submit-btn">Log In</button>
+        </form>
+        <form id="registerUser" class="input-group">
+            <label for="first_name1">First Name</label>
+            <input type="text" id="first_name1" class="input-field" name="firstName" placeholder="Enter First Name"
+                   required>
+            <label for="last_name1">Last Name</label>
+            <input type="text" id="last_name1" class="input-field" name="lastName" placeholder="Enter Last Name"
+                   required>
+            <label for="email1">Email</label>
+            <input type="email" id="email1" class="input-field" name="email" placeholder="Enter Email" required>
+            <label for="password1">Password</label>
+            <input type="password" id="password1" class="input-field" name="password" placeholder="Enter Password"
+                   required>
+            <button type="submit" class="submit-btn">Register</button>
+        </form>
+    </div>
+</div>
+<script>
+    let x = document.getElementById("login");
+    let y = document.getElementById("registerUser");
+    let z = document.getElementById("btn");
+
+    function register() {
+        x.style.left = "-400px"
+        y.style.left = "50px"
+        z.style.left = "110px"
+    }
+
+    function login() {
+        x.style.left = "50px"
+        y.style.left = "450px"
+        z.style.left = "0"
+    }
+
+    let addUserURL = '/api/add-user';
+    let generateTokenURL = '/api/generate-token';
+    let slotApiURL = '/api/v1/get-slot';
+    let getUserSlotsApiURL = '/api/v1/user-slots';
+    let globalToken;
+
+    const myForm = document.getElementById('registerUser');
+    myForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        let email = document.getElementById("email1").value;
+        let password = document.getElementById("password1").value;
+
+        fetch(addUserURL, {
+            method: 'POST',
+            body: JSON.stringify(Object.fromEntries(formData))
+        }).then(function (response) {
+            if (response.ok) {
+                fetch(generateTokenURL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "email": email,
+                        "password": password,
+                    }),
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return Promise.reject(response);
+                    }
+                }).then(function (tokenJson) {
+                    globalToken = tokenJson.token;
+                    setCookie("token", tokenJson.token, 1);
+                    let token = getCookie("token");
+                    if (token) {
+                        token = "Bearer " + token;
+                        fetch(slotApiURL, {
+                            method: 'GET',
+                            headers: {
+                                'content-type': 'application/json',
+                                'Authorization': token,
+                                'Accept': 'application/json',
+                            }
+                        }).then(function (response) {
+                            if (response.ok) {
+                                return response.text();
+                            } else {
+                                return Promise.reject(response);
+                            }
+                        }).then(function (slots) {
+                            let userLoginID = document.getElementById("user-login");
+                            userLoginID.style.display = 'none';
+                            document.getElementById("slot-api").innerHTML = slots;
+                            let dateID = document.getElementById(prevDate + "-slots")
+                            dateID.style.display = 'block'
+                            document.getElementById(prevDate).style.background = 'linear-gradient(to right, #ff105f, #ffad06)'
+                            localStorage.setItem(prevDate, prevDate)
+                        }).catch(function (error) {
+                            console.warn(error);
+                        })
+                    }
+                })
+                return response.json();
+            } else {
+                return Promise.reject(response);
+            }
+        }).catch(function (error) {
+            alert("Email already exists, please register using a different Email ID")
+            console.warn(error);
+        })
+
+    });
+
+    const myFormLogin = document.getElementById('login');
+    myFormLogin.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch(generateTokenURL, {
+            method: 'POST',
+            body: JSON.stringify(Object.fromEntries(formData)),
+        }).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject(response);
+            }
+        }).then(function (tokenJson) {
+            globalToken = tokenJson.token;
+            setCookie("token", tokenJson.token, 1);
+            let token = getCookie("token");
+            if (token) {
+                token = "Bearer " + token;
+                fetch(slotApiURL, {
+                    method: 'GET',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                        'Accept': 'application/json',
+                    }
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        return Promise.reject(response);
+                    }
+                }).then(function (slots) {
+                    let userLoginID = document.getElementById("user-login");
+                    userLoginID.style.display = 'none';
+                    document.getElementById("slot-api").innerHTML = slots;
+                    let dateID = document.getElementById(prevDate + "-slots")
+                    dateID.style.display = 'block'
+                    document.getElementById(prevDate).style.background = 'linear-gradient(to right, #ff105f, #ffad06)'
+                    localStorage.setItem(prevDate, prevDate)
+                }).catch(function (error) {
+                    console.warn(error);
+                })
+            }
+        }).catch(function (error) {
+            alert("invalid credentials");
+            console.warn(error);
+        })
+    });
+
+    let bookSlotURL = '/api/v1/add-booking';
+    let cancelSlotURL = '/api/v1/cancel-booking';
+
+    function bookSlot(startTime, date) {
+        if (confirm("Book this slot?")) {
+            let body = {"start_time": startTime, "date": date};
+            let token = getCookie("token")
+            if (token) {
+                token = "Bearer " + token;
+                fetch(bookSlotURL, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                    },
+                    body: JSON.stringify(body),
+                }).then(function (response) {
+                    if (response.ok) {
+                        document.getElementById(date + "-" + startTime).onclick = function () {
+                            cancelSlot(startTime, date)
+                        };
+                        document.getElementById(date + "-" + startTime).className = 'color-input-booked'
+                        document.getElementById(date + "-" + startTime).style.background = 'green';
+                        alert("Slot booked successfully");
+                    }else{
+                        alert("Reached the booking limit");
+                    }
+                }).catch(function (error) {
+                    alert("Crossed the booking time");
+                    console.warn(error);
+                })
+            }
+        } else {
+            alert("Slot could not be booked");
+            return
+        }
+    }
+
+    function cancelSlot(startTime, date) {
+        if (confirm("Cancel this slot?")) {
+
+            let body = {"start_time": startTime, "date": date};
+            let token = getCookie("token")
+            if (token) {
+                token = "Bearer " + token;
+                fetch(cancelSlotURL, {
+                    method: 'PUT',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                    },
+                    body: JSON.stringify(body),
+                }).then(function (response) {
+                    if (response.ok) {
+                        document.getElementById(date + "-" + startTime).onclick = function () {
+                            bookSlot(startTime, date)
+                        };
+                        document.getElementById(date + "-" + startTime).className = 'color-input-cancelled'
+                        document.getElementById(date + "-" + startTime).style.background = 'yellow'
+                        alert("slot cancelled successfully");
+                    }else{
+                        alert("The booked slot within the next 30 minutes can't be cancelled")
+                    }
+                }).catch(function (error) {
+                    alert("crossed the cancellation time");
+                    console.warn(error);
+                })
+            }
+        } else {
+            alert("Slot could not be cancelled");
+            return
+        }
+    }
+
+    function expiredSlot() {
+        alert("slot has expired");
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function checkCookie() {
+        let token = getCookie("token");
+        if (token !== "") {
+            if (token) {
+                token = "Bearer " + token;
+                fetch(slotApiURL, {
+                    method: 'GET',
+                    headers: {
+                        'content-type': 'application/json',
+                        'Authorization': token,
+                        'Accept': 'application/json',
+                    }
+                }).then(function (response) {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        return Promise.reject(response);
+                    }
+                }).then(function (slots) {
+                    let userLoginID = document.getElementById("user-login");
+                    userLoginID.style.display = 'none';
+                    document.getElementById("slot-api").innerHTML = slots;
+                    document.getElementById("slot-api").innerHTML = slots;
+                    let dateID = document.getElementById(prevDate + "-slots")
+                    dateID.style.display = 'block'
+                    document.getElementById(prevDate).style.background = 'linear-gradient(to right, #ff105f, #ffad06)'
+                    localStorage.setItem(prevDate, prevDate)
+                }).catch(function (error) {
+                    console.warn(error);
+                })
+            }
+        }
+    }
+
+    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+        checkCookie();
+    }
+
+    function logOut() {
+        document.cookie = "token=; expires = Thu, 01 Jan 1970 00:00:00 UTC" + ";path=/";
+        window.location.reload();
+    }
+
+    let prevDate = new Date()
+    prevDate = prevDate.toISOString().split('T')[0]
+    localStorage.setItem("prevDate", prevDate);
+
+    function toggle(date) {
+        document.getElementById(date).style.background = 'linear-gradient(to right, #ff105f, #ffad06)';
+        let getCustomID = document.getElementById(date + "-slots")
+        if (localStorage.getItem("prevDate")) {
+            let getDate = localStorage.getItem("prevDate")
+            let getDateID = document.getElementById(getDate + "-slots")
+            getDateID.style.display = 'none';
+            document.getElementById(getDate).style.background = 'lightblue'
+        }
+        getCustomID.style.display = 'block';
+        localStorage.setItem("prevDate", date);
+    }
+
+    function getUserSlots() {
+        let token = getCookie("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(getUserSlotsApiURL, {
+                method: 'GET',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                    'Accept': 'application/json',
+                }
+            }).then(function (response) {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    return Promise.reject(response);
+                }
+            }).then(function (userSlots) {
+                let userLoginID = document.getElementById("slot-booking");
+                userLoginID.style.display = 'none';
+                document.getElementById("userSlot-api").innerHTML = userSlots;
+            }).catch(function (error) {
+                console.warn(error);
+            })
+        }
+    }
+</script>
+</body>
+</html>
