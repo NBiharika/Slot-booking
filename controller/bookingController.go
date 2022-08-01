@@ -6,8 +6,14 @@ import (
 	"Slot_booking/utils"
 	"errors"
 	"strconv"
+	"time"
 )
 import "github.com/gin-gonic/gin"
+
+const (
+	limitForBookedSlotsOfAUser  = 5
+	limitOfAllUsersBookingASlot = 5
+)
 
 type BookingController interface {
 	FindAll() []entity.Booking
@@ -44,19 +50,17 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	m, err := utils.ReadRequestBody(ctx)
 
 	startTime := m["start_time"].(string)
-	date := entity.DateForSlot()
+	date := m["date"].(string)
 
 	slot, err := c.slotService.Find(startTime, date)
 	if err != nil {
 		return err
 	}
 
-	slotTimeH, _ := strconv.Atoi(slot.StartTime[:2])
-	slotTimeM, _ := strconv.Atoi(slot.StartTime[3:])
-	presentTimeH, _ := strconv.Atoi(entity.PresentTime()[:2])
-	presentTimeM, _ := strconv.Atoi(entity.PresentTime()[3:])
-
-	if slotTimeH < presentTimeH || (slotTimeH == presentTimeH && slotTimeM < presentTimeM) {
+	dateStr := date + " " + slot.StartTime
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
+	if slotDate.Before(time.Now()) {
 		err = errors.New("crossed the booking time")
 		return err
 	}
@@ -64,10 +68,25 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
-	c.service.BookSlot(booking)
+	countAllBookedSlotsOfAUser, err := c.service.CountAllBookedSlotsOfAUser(booking)
+	if err == nil {
+		if int(countAllBookedSlotsOfAUser) >= limitForBookedSlotsOfAUser {
+			err = errors.New("a user can only book " + strconv.Itoa(limitForBookedSlotsOfAUser) + " slots")
+			return err
+		}
+	}
+	countTotalUsersBookingASlot, err := c.service.CountTotalUsersBookingASlot(booking)
+	if err == nil {
+		if int(countTotalUsersBookingASlot) >= limitOfAllUsersBookingASlot {
+			err = errors.New("a slot can only be booked by " + strconv.Itoa(limitOfAllUsersBookingASlot) + " users")
+			return err
+		}
+	}
+	_, err = c.service.BookSlot(booking)
 	booking.Status = "booked"
-	return nil
+	return err
 }
+
 func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	var booking entity.Booking
 
@@ -79,7 +98,7 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	m, err := utils.ReadRequestBody(ctx)
 
 	startTime := m["start_time"].(string)
-	date := entity.DateForSlot()
+	date := m["date"].(string)
 
 	slot, err := c.slotService.Find(startTime, date)
 	if err != nil {
@@ -92,17 +111,16 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		return "", err
 	}
 
-	slotTimeH, _ := strconv.Atoi(slot.StartTime[:2])
-	slotTimeM, _ := strconv.Atoi(slot.StartTime[3:])
-	presentTimeH, _ := strconv.Atoi(entity.PresentTimePlus30minutes()[:2])
-	presentTimeM, _ := strconv.Atoi(entity.PresentTimePlus30minutes()[3:])
+	todayTimePlus30Minutes := time.Now().Add(30 * time.Minute)
+	dateStr := date + " " + slot.StartTime
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
 
-	if slotTimeH > presentTimeH || (slotTimeH == presentTimeH && slotTimeM >= presentTimeM) {
-		booking.Status = "cancelled"
-	} else {
+	if slotDate.Before(todayTimePlus30Minutes) {
 		err = errors.New("crossed the cancellation time")
 		return "", err
 	}
+	booking.Status = "cancelled"
 	booking.SlotID = slot.ID
 	rowsAffected, err := c.service.CancelBooking(booking)
 	if err != nil {
@@ -112,7 +130,6 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	if rowsAffected == 0 {
 		message = "slot has already been cancelled"
 	}
-
 	return message, err
 }
 

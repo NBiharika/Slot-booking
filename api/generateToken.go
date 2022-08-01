@@ -8,11 +8,8 @@ import (
 func GenerateToken(ctx *gin.Context) {
 	tokenString, err, statusCode := start_up.TokenController.GenerateToken(ctx)
 	if err != nil {
-		//ctx.HTML(statusCode, "index.html", gin.H{"error": err.Error()})
 		ctx.JSON(statusCode, gin.H{"error": err.Error()})
 	} else {
-		//ctx.HTML(statusCode, "index.html", gin.H{"token": tokenString})
 		ctx.JSON(statusCode, gin.H{"token": tokenString})
-		//ctx.Redirect(http.StatusMovedPermanently, "/api/v1/get-slot")
 	}
 }

@@ -10,10 +10,8 @@ func AddUser(ctx *gin.Context) {
 	err, statusCode := start_up.UserController.AddUser(ctx)
 
 	if err != nil {
-		//ctx.HTML(statusCode, "slot.html", gin.H{"error": err.Error()})
 		ctx.JSON(statusCode, gin.H{"error": err.Error()})
 	} else {
-		//ctx.HTML(http.StatusOK, "slot.html", gin.H{"message": "User added successfully"})
 		ctx.JSON(http.StatusOK, gin.H{"message": "User added successfully"})
 	}
 }

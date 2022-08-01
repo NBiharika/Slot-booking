@@ -3,12 +3,12 @@ package manager
 import (
 	"Slot_booking/entity"
 	"gorm.io/gorm"
+	"time"
 )
 
 type SlotRepository interface {
 	Create(slot []entity.Slot) error
-	CreateSlot(string) error
-	FindAll() []entity.Slot
+	FindAll(startDate string, endDate string) []entity.Slot
 	Find(slot entity.Slot) (entity.Slot, error)
 	GetSlots(slotIDs []uint64) ([]entity.Slot, error)
 	GetCount(date string) (int64, error)
@@ -24,30 +24,17 @@ func SlotRepo() SlotRepository {
 	}
 }
 
-func (db *SlotDB) CreateSlot(startTime string) error {
-	var slot entity.Slot
-	slot.Date = entity.DateForSlot()
-	slot.StartTime = startTime
-	response := dbClient.Create(&slot)
-	if response.Error != nil {
-		return response.Error
-	}
-	return nil
-}
-
 func (db *SlotDB) Create(slot []entity.Slot) error {
 	//db.connection.AutoMigrate(&entity.Slot{})
 	err := db.connection.Create(&slot).Error
 	return err
 }
 
-func (db *SlotDB) FindAll() []entity.Slot {
+func (db *SlotDB) FindAll(startDate string, endDate string) []entity.Slot {
 	var slot []entity.Slot
-	db.connection.Where("date=?", entity.DateForSlot()).Find(&slot)
+	db.connection.Where("date>=? and date<=?", startDate, endDate).Find(&slot)
 	return slot
 }
-
-//date>=startdate,enddate
 
 func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 	err := db.connection.Where(&slot).Find(&slot).Error
@@ -55,8 +42,11 @@ func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 }
 func (db *SlotDB) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
 	var slot []entity.Slot
-
-	err := db.connection.Model(&entity.Slot{}).Where("id in (?) and date=?", slotIDs, entity.DateForSlot()).Find(&slot).Error
+	todayTime := time.Now()
+	startDate := entity.DateForSlot(todayTime)
+	endTime := todayTime.Add(6 * 24 * time.Hour)
+	endDate := entity.DateForSlot(endTime)
+	err := db.connection.Model(&entity.Slot{}).Where("id in (?) and date>=? and date<=?", slotIDs, startDate, endDate).Find(&slot).Error
 	return slot, err
 }
 

@@ -22,7 +22,6 @@ func UserRepo() UserRepository {
 }
 
 func (db *UserDB) Create(user entity.User) error {
-	//db.connection.AutoMigrate(&entity.User{})
 	err := db.connection.Create(&user).Error
 	return err
 }

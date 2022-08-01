@@ -11,12 +11,24 @@
     background-size: cover;
     position: absolute;
 }
+.toggle-button{
+    display: inline-block;
+    padding: 10px 49.8px;
+    cursor: pointer;
+    background: lightblue;
+    position: center;
+    margin-bottom: 30px;
+    font-weight: bolder;
+    font-size: larger;
+}
+
 .row{
     column-count: 3;
     column-gap: 30px;
     column-width: 50px;
-
+    display: none;
 }
+
 .date-input{
     width: 100%;
     position: center;
@@ -44,6 +56,7 @@
     position: center;
     font-weight: bold;
 }
+
 .color-input-booked {
     width: 35%;
     padding: 13px 50px;
@@ -58,6 +71,7 @@
     position: center;
     font-weight: bold;
 }
+
 .color-input-cancelled {
     width: 35%;
     padding: 13px 50px;
@@ -72,6 +86,7 @@
     position: center;
     font-weight: bold;
 }
+
 .color-input-notBookedAndCantBeCancelled{
     width: 35%;
     padding: 13px 50px;
@@ -86,6 +101,7 @@
     position: center;
     font-weight: bold;
 }
+
 .color-input-bookedButCantBeCancelled {
     width: 35%;
     padding: 13px 50px;
@@ -100,12 +116,13 @@
     position: center;
     font-weight: bold;
 }
+
 .userLogout{
-    width: 25%;
-    margin-top: 10px;
-    margin-left: -450px;
+    width: 15%;
+    margin-left: 750px;
+    margin-top: -20px;
     cursor: pointer;
-    padding: 15px 20px;
+    padding: 10px 10px;
     font-weight: bold;
     font-size: larger;
     background: linear-gradient(to right, #ff105f, #ffad06);
@@ -114,3 +131,19 @@
     position: absolute;
     border-radius: 30px;
 }
+
+.booked-slots{
+    width: 15%;
+    margin-left: 500px;
+    margin-top: -20px;
+    cursor: pointer;
+    padding: 10px 10px;
+    font-weight: bold;
+    font-size: larger;
+    background: linear-gradient(to right, #ff105f, #ffad06);
+    border: 0;
+    outline: none;
+    position: absolute;
+    border-radius: 30px;
+}
+
