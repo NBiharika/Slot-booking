@@ -59,6 +59,9 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 func (c *slotController) AddSlot(ctx *gin.Context) error {
 	m, err := utils.ReadRequestBody(ctx)
 	date := m["date"].(string)
+	//todayTime := time.Now()
+	//NextTime := todayTime.Add(6 * 24 * time.Hour)
+	//date := NextTime.Format("2006-01-02")
 	count, err := c.service.GetCount(date)
 	if err != nil {
 		return err
@@ -79,6 +82,7 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(date)
 	key := fmt.Sprintf("slots_%v", slot[0].Date)
 	c.slotCache.SetSlot(ctx, key, slot)
 	return nil

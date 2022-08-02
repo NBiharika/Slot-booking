@@ -1,4 +1,4 @@
-package main
+package servers
 
 import (
 	"Slot_booking/api"
@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func Server() {
 	start_up.Initialize()
 
 	server := gin.Default()
