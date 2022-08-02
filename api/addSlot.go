@@ -2,12 +2,17 @@ package api
 
 import (
 	"Slot_booking/start_up"
+	"Slot_booking/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func AddSlot(ctx *gin.Context) {
-	err := start_up.SlotController.AddSlot(ctx)
+	m, err := utils.ReadRequestBody(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+	}
+	err = start_up.SlotController.AddSlot(ctx, m)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	} else {
