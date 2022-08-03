@@ -50,7 +50,7 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
 
-	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
+	key := fmt.Sprintf("user_data_%v", jwtData.User.ID)
 	user, err := c.userCache.GetUser(ctx, key)
 	if err != nil {
 		user, err = c.userService.GetUser(jwtData.User.ID)
