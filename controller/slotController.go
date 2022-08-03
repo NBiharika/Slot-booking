@@ -78,7 +78,5 @@ func (c *slotController) AddSlot(ctx *gin.Context, m map[string]interface{}) err
 	if err != nil {
 		return err
 	}
-	key := fmt.Sprintf("slots_%v", slots[0].Date)
-	c.slotCache.SetSlot(ctx, key, slots)
 	return nil
 }
