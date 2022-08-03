@@ -51,9 +51,7 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 		date := slots[i].Date
 		key := fmt.Sprintf("slots_%v", date)
 		slotsForOne := make([]entity.Slot, 0)
-		for j := i; j < i+24; j++ {
-			slotsForOne = append(slotsForOne, slots[j])
-		}
+		slotsForOne = slots[i : i+24]
 		c.slotCache.SetSlot(ctx, key, slotsForOne)
 	}
 	return finalSlots
