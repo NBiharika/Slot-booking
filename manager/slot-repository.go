@@ -30,7 +30,7 @@ func (db *SlotDB) Create(slot []entity.Slot) error {
 
 func (db *SlotDB) FindAll(dates []string) ([]entity.Slot, error) {
 	var slot []entity.Slot
-	err := db.connection.Where("date in (?)", dates).Order("date").Order("start_time").Find(&slot).Error
+	err := db.connection.Where("date in (?)", dates).Find(&slot).Error
 	return slot, err
 }
 
