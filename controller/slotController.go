@@ -4,7 +4,6 @@ import (
 	"Slot_booking/cache"
 	"Slot_booking/entity"
 	"Slot_booking/service"
-	"Slot_booking/utils"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -13,7 +12,7 @@ import (
 
 type SlotController interface {
 	FindAll(ctx *gin.Context, startDate time.Time, endTime time.Time) []entity.Slot
-	AddSlot(ctx *gin.Context) error
+	AddSlot(ctx *gin.Context, m map[string]interface{}) error
 }
 
 type slotController struct {
@@ -57,8 +56,7 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 	return finalSlots
 }
 
-func (c *slotController) AddSlot(ctx *gin.Context) error {
-	m, err := utils.ReadRequestBody(ctx)
+func (c *slotController) AddSlot(ctx *gin.Context, m map[string]interface{}) error {
 	date := m["date"].(string)
 	count, err := c.service.GetCount(date)
 	if err != nil {
@@ -70,7 +68,6 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 	}
 
 	slots := make([]entity.Slot, 24)
-
 	for i := 0; i < 24; i++ {
 		slots[i].Date = date
 		slots[i].StartTime = entity.StartTimeOfSlot(i)
@@ -80,7 +77,5 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	key := fmt.Sprintf("slots_%v", slots[0].Date)
-	c.slotCache.SetSlot(ctx, key, slots)
 	return nil
 }
