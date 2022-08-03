@@ -2,6 +2,7 @@ package manager
 
 import (
 	"Slot_booking/entity"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -29,9 +30,10 @@ func (db *SlotDB) Create(slot []entity.Slot) error {
 }
 
 func (db *SlotDB) FindAll(dates []string) ([]entity.Slot, error) {
-	var slot []entity.Slot
-	err := db.connection.Where("date in (?)", dates).Find(&slot).Error
-	return slot, err
+	var slots []entity.Slot
+	err := db.connection.Where("date in (?)", dates).Order("date").Order("start_time").Find(&slots).Error
+	fmt.Println(slots)
+	return slots, err
 }
 
 func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
