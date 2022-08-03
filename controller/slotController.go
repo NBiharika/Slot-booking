@@ -68,7 +68,6 @@ func (c *slotController) AddSlot(ctx *gin.Context, m map[string]interface{}) err
 	}
 
 	slots := make([]entity.Slot, 24)
-
 	for i := range [24]int{} {
 		slots[i].Date = date
 		slots[i].StartTime = entity.StartTimeOfSlot(i)
