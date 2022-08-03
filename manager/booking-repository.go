@@ -6,7 +6,7 @@ import (
 )
 
 type BookingRepository interface {
-	CountAllBookedSlotsOfAUserForADay(booking entity.Booking, date string) (int64, error)
+	CountAllBookedSlotsOfAUser(booking entity.Booking, date string) (int64, error)
 	CountTotalUsersBookingASlot(booking entity.Booking) (int64, error)
 	Create(booking entity.Booking) (int64, error)
 	FindAll() []entity.Booking
@@ -24,9 +24,8 @@ func BookingRepo() BookingRepository {
 	}
 }
 
-func (db *BookingDB) CountAllBookedSlotsOfAUserForADay(booking entity.Booking, date string) (int64, error) {
+func (db *BookingDB) CountAllBookedSlotsOfAUser(booking entity.Booking, date string) (int64, error) {
 	var countSlotsForAUser int64
-	//todayDate := entity.DateForSlot(time.Now())
 	err := db.connection.Model(&entity.Booking{}).Joins("INNER JOIN slot ON slot.id = bookings.slot_id").Select(
 		"slot.date, slot.start_time, bookings.user_id, bookings.status").Where(
 		"user_id=? and status=? and date=?", booking.UserID, "booked", date).Count(&countSlotsForAUser).Error
