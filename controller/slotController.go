@@ -72,7 +72,7 @@ func (c *slotController) AddSlot(ctx *gin.Context) error {
 
 	slots := make([]entity.Slot, 24)
 
-	for i := range [24]int{} {
+	for i := 0; i < 24; i++ {
 		slots[i].Date = date
 		slots[i].StartTime = entity.StartTimeOfSlot(i)
 	}
