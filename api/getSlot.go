@@ -1,7 +1,6 @@
 package api
 
 import (
-	"Slot_booking/entity"
 	"Slot_booking/start_up"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -19,42 +18,40 @@ func GetSlot(ctx *gin.Context) {
 
 func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 	todayTime := time.Now()
-	startDate := entity.DateForSlot(todayTime)
 	endTime := todayTime.Add(6 * 24 * time.Hour)
-	endDate := entity.DateForSlot(endTime)
+	loc, _ := time.LoadLocation("Asia/Kolkata")
 
-	slots := start_up.SlotController.FindAll(startDate, endDate)
+	slots := start_up.SlotController.FindAll(ctx, todayTime, endTime)
 	userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
 
 	m := make(map[string]map[uint64]interface{})
 
-	for i := 0; i < len(slots); i++ {
-		if m[slots[i].Date] == nil {
-			m[slots[i].Date] = make(map[uint64]interface{})
+	for _, slot := range slots {
+		if m[slot.Date] == nil {
+			m[slot.Date] = make(map[uint64]interface{})
 		}
-		dateStr := slots[i].Date + " " + slots[i].StartTime
-		loc, _ := time.LoadLocation("Asia/Kolkata")
+
+		dateStr := slot.Date + " " + slot.StartTime
 		slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
 
 		if slotDate.Before(todayTime) {
-			m[slots[i].Date][slots[i].ID] = map[string]interface{}{
-				"startTime": slots[i].StartTime,
+			m[slot.Date][slot.ID] = map[string]interface{}{
+				"startTime": slot.StartTime,
 				"status":    "expired",
 			}
 		} else {
-			m[slots[i].Date][slots[i].ID] = map[string]interface{}{
-				"startTime": slots[i].StartTime,
+			m[slot.Date][slot.ID] = map[string]interface{}{
+				"startTime": slot.StartTime,
 				"status":    "cancelled",
 			}
 		}
 	}
-	for i := 0; i < len(userSlots); i++ {
-		dateStr := userSlots[i].Date + " " + userSlots[i].StartTime
-		loc, _ := time.LoadLocation("Asia/Kolkata")
+	for _, userSlot := range userSlots {
+		dateStr := userSlot.Date + " " + userSlot.StartTime
 		slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
 		if slotDate.After(todayTime) {
-			m[userSlots[i].Date][userSlots[i].ID] = map[string]interface{}{
-				"startTime": userSlots[i].StartTime,
+			m[userSlot.Date][userSlot.ID] = map[string]interface{}{
+				"startTime": userSlot.StartTime,
 				"status":    "booked",
 			}
 		}

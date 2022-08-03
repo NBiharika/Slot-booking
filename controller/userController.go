@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"Slot_booking/cache"
 	"Slot_booking/entity"
 	"Slot_booking/service"
 	"Slot_booking/utils"
@@ -16,12 +17,14 @@ type UserController interface {
 }
 
 type userController struct {
-	service service.UserService
+	service   service.UserService
+	userCache cache.UserCache
 }
 
-func NewUserController(service service.UserService) UserController {
+func NewUserController(service service.UserService, cache cache.UserCache) UserController {
 	return &userController{
-		service: service,
+		service:   service,
+		userCache: cache,
 	}
 }
 
@@ -29,7 +32,12 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
 
-	user, err := c.service.GetUser(jwtData.User.ID)
+	key := fmt.Sprintf("user_data_%v", jwtData.User.ID)
+	user, err := c.userCache.GetUser(ctx, key)
+	if err == nil {
+		return user, err, http.StatusOK
+	}
+	user, err = c.service.GetUser(jwtData.User.ID)
 	if err != nil {
 		err = errors.New("invalid request")
 		return entity.User{}, err, http.StatusBadRequest
@@ -38,6 +46,7 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 		return entity.User{}, err, http.StatusInternalServerError
 	}
 
+	c.userCache.SetUser(ctx, key, user)
 	return user, err, http.StatusOK
 }
 
@@ -45,18 +54,19 @@ func (c *userController) AddUser(ctx *gin.Context) (error, int) {
 	var user entity.User
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {
-		fmt.Println("bind err", err)
 		return err, http.StatusBadRequest
 	}
 	if err := user.HashPassword(user.Password); err != nil {
 		err = errors.New("password could not be created")
 		return err, http.StatusInternalServerError
 	}
-	_, err := c.service.AddUser(user)
+
+	user, err := c.service.AddUser(user)
 	if err != nil {
-		fmt.Println("already exists err", err)
 		err = errors.New("user already exists")
 		return err, http.StatusInternalServerError
 	}
+	key := fmt.Sprintf("user_data_%v", user.ID)
+	c.userCache.SetUser(ctx, key, user)
 	return nil, http.StatusOK
 }
