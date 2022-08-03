@@ -87,36 +87,6 @@
     font-weight: bold;
 }
 
-.color-input-notBookedAndCantBeCancelled{
-    width: 35%;
-    padding: 13px 50px;
-    cursor: pointer;
-    display: block;
-    margin-left: 135px;
-    margin-bottom: 45px;
-    background: yellow;
-    border: 0;
-    outline: none;
-    border-radius: 10px;
-    position: center;
-    font-weight: bold;
-}
-
-.color-input-bookedButCantBeCancelled {
-    width: 35%;
-    padding: 13px 50px;
-    cursor: pointer;
-    display: block;
-    margin-left: 135px;
-    margin-bottom: 45px;
-    background: yellow;
-    border: 0;
-    outline: none;
-    border-radius: 10px;
-    position: center;
-    font-weight: bold;
-}
-
 .userLogout{
     width: 15%;
     margin-left: 750px;

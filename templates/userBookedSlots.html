@@ -6,11 +6,13 @@
 <body>
 <div class="user-slots" id="bookings">
     <h1 class="heading">All Booked Slots:</h1>
-    {{range $key,$value := .userSlots}}
-        {{range $value}}
-            <p class="list">{{$key}} - {{.startTime}}</p>
+    <div class="row-division">
+        {{range $key,$value := .userSlots}}
+            {{range $value}}
+                <p class="list">{{$key}} - {{.startTime}}</p>
+            {{end}}
         {{end}}
-    {{end}}
+    </div>
     <button id="logOut" class="user-logOut" onClick="logOut()">Log Out</button>
     <button id="back" class="back" onClick="window.location.reload();">Back</button>
 </div>

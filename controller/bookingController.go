@@ -78,7 +78,7 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 	booking.UserID = user.ID
 	booking.SlotID = slot.ID
 
-	countAllBookedSlotsOfAUser, err := c.service.CountAllBookedSlotsOfAUser(booking)
+	countAllBookedSlotsOfAUser, err := c.service.CountAllBookedSlotsOfAUser(booking, date)
 	if err != nil {
 		return err
 	}

@@ -2,11 +2,11 @@
     margin: 0;
     padding: 0;
     font-family: sans-serif;
+    background: lightblue;
 }
 .user-slots {
     height: 100%;
     width: 100%;
-    background-color: lightblue;
     background-position: center;
     background-size: cover;
     position: absolute;
@@ -16,14 +16,32 @@
     font-size: xxx-large;
     color: black;
     margin-bottom: 50px;
+    border-width: thick;
+    border-style: solid;
+    border-color: green;
+    width: 25%;
+    position: center;
+    margin-left: 530px;
+    background: linen;
+}
+.row-division{
+    column-count: 3;
+    column-gap: 30px;
+    column-width: 50px;
 }
 .list{
     color: green;
-    text-align: center;
     font-size: xx-large;
+    text-align: center;
+    width: 75%;
+    display: block;
+    border-style: solid;
+    border-width: thin;
+    background: linen;
     font-weight: bold;
     padding: 10px 20px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
+    margin-left: 30px;
 }
 .user-logOut{
     width: 15%;
@@ -37,6 +55,7 @@
     outline: none;
     position: absolute;
     border-radius: 30px;
+    margin-top: 4%;
 }
 .back{
     width: 15%;
@@ -50,4 +69,5 @@
     outline: none;
     position: absolute;
     border-radius: 30px;
+    margin-top: 4%;
 }
