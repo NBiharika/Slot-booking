@@ -45,16 +45,15 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 	slots, _ := c.service.FindAll(dates)
 	finalSlots = append(finalSlots, slots...)
 
-	//for i := 0; i < len(slots); i += 24 {
-	//	date := slots[i].Date
-	//	key := fmt.Sprintf("slots_%v", date)
-	//	c.slotCache.SetSlot(ctx, key, slots[i])
-	//	fmt.Println(i)
-	//}
-	date := slots[0].Date
-	fmt.Println(date)
-	key := fmt.Sprintf("slots_%v", date)
-	c.slotCache.SetSlot(ctx, key, slots)
+	for i := 0; i < len(slots); i += 24 {
+		date := slots[i].Date
+		key := fmt.Sprintf("slots_%v", date)
+		slotsForOne := make([]entity.Slot, 0)
+		for j := i; j < i+24; j++ {
+			slotsForOne = append(slotsForOne, slots[j])
+		}
+		c.slotCache.SetSlot(ctx, key, slotsForOne)
+	}
 	return finalSlots
 }
 

@@ -33,7 +33,6 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	jwtData := userReq.(*utils.JWTClaim)
 
 	key := fmt.Sprintf("user_data_%v", jwtData.User.ID)
-	fmt.Println(jwtData.User.ID)
 	user, err := c.userCache.GetUser(ctx, key)
 	if err == nil {
 		return user, err, http.StatusOK
