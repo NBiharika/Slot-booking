@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 type UserController interface {
@@ -33,7 +32,7 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
 
-	key := fmt.Sprintf("user_data_%v", strconv.FormatUint(jwtData.User.ID, 10))
+	key := fmt.Sprintf("user_data_%v", jwtData.User.ID)
 	user, err := c.userCache.GetUser(ctx, key)
 	if err == nil {
 		return user, err, http.StatusOK
