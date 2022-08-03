@@ -18,6 +18,7 @@ func UserSlot(ctx *gin.Context) {
 
 func GetUserBookedSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 	userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
+	loc, _ := time.LoadLocation("Asia/Kolkata")
 
 	m := make(map[string]map[uint64]interface{})
 	for _, userSlot := range userSlots {
@@ -25,7 +26,6 @@ func GetUserBookedSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 			m[userSlot.Date] = make(map[uint64]interface{})
 		}
 		dateStr := userSlot.Date + " " + userSlot.StartTime
-		loc, _ := time.LoadLocation("Asia/Kolkata")
 		slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
 
 		if slotDate.After(time.Now()) {

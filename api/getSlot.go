@@ -19,8 +19,7 @@ func GetSlot(ctx *gin.Context) {
 func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 	todayTime := time.Now()
 	endTime := todayTime.Add(6 * 24 * time.Hour)
-	//startDate := entity.DateForSlot(todayTime)
-	//endDate := entity.DateForSlot(endTime)
+	loc, _ := time.LoadLocation("Asia/Kolkata")
 
 	slots := start_up.SlotController.FindAll(ctx, todayTime, endTime)
 	userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
@@ -33,7 +32,6 @@ func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 		}
 
 		dateStr := slot.Date + " " + slot.StartTime
-		loc, _ := time.LoadLocation("Asia/Kolkata")
 		slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
 
 		if slotDate.Before(todayTime) {
@@ -50,7 +48,6 @@ func FinalUserSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
 	}
 	for _, userSlot := range userSlots {
 		dateStr := userSlot.Date + " " + userSlot.StartTime
-		loc, _ := time.LoadLocation("Asia/Kolkata")
 		slotDate, _ := time.ParseInLocation("2006-01-02 15:04", dateStr, loc)
 		if slotDate.After(todayTime) {
 			m[userSlot.Date][userSlot.ID] = map[string]interface{}{

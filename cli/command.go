@@ -34,7 +34,7 @@ var addSlot = cli.Command{
 		fmt.Println("We are adding a slot")
 		start_up.Initialize()
 		m := make(map[string]interface{})
-		nextTime := time.Now().Add(7 * 24 * time.Hour)
+		nextTime := time.Now().Add(6 * 24 * time.Hour)
 		m["date"] = nextTime.Format("2006-01-02")
 		err := start_up.SlotController.AddSlot(&gin.Context{}, m)
 		if err != nil {

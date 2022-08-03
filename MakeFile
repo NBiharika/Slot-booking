@@ -9,10 +9,10 @@ build: build-go-server
 
 build-go-server:
 	rm-f $( BINARY_NAME )
-	go build -o $(BINARY_NAME) server.go
+	go build -o $(BINARY_NAME) main.go start
 
 start:
-	go run server.go
+	go run main.go start
 
 restart:
 	ps aux | grep server | grep -v grep | tr -s ' ' | cut -d ' ' -f2 | xargs kill

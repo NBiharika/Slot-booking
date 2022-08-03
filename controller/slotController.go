@@ -37,19 +37,22 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 		key := fmt.Sprintf("slots_%v", formatDate)
 		slots, err := c.slotCache.GetSlot(ctx, key)
 		if err == nil {
-			for _, slot := range slots {
-				finalSlots = append(finalSlots, slot)
-			}
-			return finalSlots
+			finalSlots = append(finalSlots, slots...)
 		}
 		dates = append(dates, formatDate)
 	}
 
 	slots, _ := c.service.FindAll(dates)
-	for _, slot := range slots {
-		finalSlots = append(finalSlots, slot)
-	}
+	finalSlots = append(finalSlots, slots...)
+
+	//for i := 0; i < len(slots); i += 24 {
+	//	date := slots[i].Date
+	//	key := fmt.Sprintf("slots_%v", date)
+	//	c.slotCache.SetSlot(ctx, key, slots[i])
+	//	fmt.Println(i)
+	//}
 	date := slots[0].Date
+	fmt.Println(date)
 	key := fmt.Sprintf("slots_%v", date)
 	c.slotCache.SetSlot(ctx, key, slots)
 	return finalSlots
@@ -66,19 +69,18 @@ func (c *slotController) AddSlot(ctx *gin.Context, m map[string]interface{}) err
 		return err
 	}
 
-	slot := make([]entity.Slot, 24)
+	slots := make([]entity.Slot, 24)
 
 	for i := range [24]int{} {
-		slot[i].Date = date
-		slot[i].StartTime = entity.StartTimeOfSlot(i)
+		slots[i].Date = date
+		slots[i].StartTime = entity.StartTimeOfSlot(i)
 	}
 
-	slot, err = c.service.AddSlot(slot)
+	slots, err = c.service.AddSlot(slots)
 	if err != nil {
 		return err
 	}
-	fmt.Println(date)
-	key := fmt.Sprintf("slots_%v", slot[0].Date)
-	c.slotCache.SetSlot(ctx, key, slot)
+	key := fmt.Sprintf("slots_%v", slots[0].Date)
+	c.slotCache.SetSlot(ctx, key, slots)
 	return nil
 }
