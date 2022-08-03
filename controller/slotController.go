@@ -39,8 +39,9 @@ func (c *slotController) FindAll(ctx *gin.Context, todayTime time.Time, endTime 
 		slots, err := c.slotCache.GetSlot(ctx, key)
 		if err == nil {
 			finalSlots = append(finalSlots, slots...)
+		} else {
+			dates = append(dates, formatDate)
 		}
-		dates = append(dates, formatDate)
 	}
 
 	slots, _ := c.service.FindAll(dates)
