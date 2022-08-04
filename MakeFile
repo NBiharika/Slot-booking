@@ -3,17 +3,17 @@
 .ONESHELL: ;             # recipes execute in same shell
 .EXPORT_ALL_VARIABLES: ; # send all vars to shell
 
-BINARY_NAME='slot-server'
+BINARY_NAME='slot-booking'
 
 build: build-go-server
 
 build-go-server:
 	rm-f $( BINARY_NAME )
-	go build -o $(BINARY_NAME) main.go start
+	go build -o $(BINARY_NAME) main.go
 
 start:
 	go run main.go start
 
 restart:
 	ps aux | grep server | grep -v grep | tr -s ' ' | cut -d ' ' -f2 | xargs kill
-	go run server.go
+	go run main.go start
