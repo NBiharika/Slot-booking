@@ -1,15 +1,14 @@
 <html>
 <head>
     <title>{{.title}}</title>
-    <link rel="stylesheet" href="css/userBookedSlots.css">
+    <link rel="stylesheet" href="css/allUsers.css">
 </head>
 <body>
-<div class="user-slots" id="bookings">
-    <h1 class="heading">All Booked Slots:</h1>
+<div class="all-users" id="users">
     <div class="row-division">
-        {{range $key,$value := .userSlots}}
+        {{range $key,$value := .users}}
             {{range $value}}
-                <p class="list">{{$key}} - {{.email}}</p>
+                <p class="list">{{$key}} - {{.startTime}}</p>
             {{end}}
         {{end}}
     </div>

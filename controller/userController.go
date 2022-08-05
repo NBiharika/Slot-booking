@@ -14,6 +14,7 @@ import (
 type UserController interface {
 	GetUser(ctx *gin.Context) (entity.User, error, int)
 	AddUser(ctx *gin.Context) (error, int)
+	GetAllUsers() ([]entity.User, error)
 }
 
 type userController struct {
@@ -69,4 +70,8 @@ func (c *userController) AddUser(ctx *gin.Context) (error, int) {
 	key := fmt.Sprintf("user_data_%v", user.ID)
 	c.userCache.SetUser(ctx, key, user)
 	return nil, http.StatusOK
+}
+
+func (c *userController) GetAllUsers() ([]entity.User, error) {
+	return c.service.GetAllUsers()
 }
