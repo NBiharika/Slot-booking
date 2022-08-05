@@ -176,5 +176,6 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
 	if err != nil {
 		return slots, err
 	}
+
 	return slots, err
 }
