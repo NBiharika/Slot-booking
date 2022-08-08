@@ -7,10 +7,25 @@ import (
 )
 
 func GetAllUsers(ctx *gin.Context) {
-	users, _ := start_up.UserController.GetAllUsers()
+	AllUsers := AllUsers()
 
 	ctx.HTML(http.StatusOK, "allUsers.html", gin.H{
 		"title": "AllUsers",
-		"users": users,
+		"users": AllUsers,
 	})
+}
+
+func AllUsers() map[uint64]interface{} {
+	users, _ := start_up.UserController.GetAllUsers()
+
+	m := make(map[uint64]interface{})
+	for _, user := range users {
+		m[user.ID] = map[string]interface{}{
+			"firstName": user.FirstName,
+			"lastName":  user.LastName,
+			"email":     user.Email,
+			"role":      user.Role,
+		}
+	}
+	return m
 }

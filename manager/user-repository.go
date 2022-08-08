@@ -10,6 +10,9 @@ type UserRepository interface {
 	Find(userID uint64) (entity.User, error)
 	FindUsingEmail(user entity.User) (entity.User, error)
 	FindAll() ([]entity.User, error)
+	UpdateToUser(user entity.User) (entity.User, error)
+	UpdateToAdmin(user entity.User) (entity.User, error)
+	UpdateToBlockUser(user entity.User) (entity.User, error)
 }
 
 type UserDB struct {
@@ -44,4 +47,19 @@ func (db *UserDB) FindAll() ([]entity.User, error) {
 	var users []entity.User
 	err := db.connection.Find(&users).Error
 	return users, err
+}
+
+func (db *UserDB) UpdateToUser(user entity.User) (entity.User, error) {
+	err := db.connection.Model(&entity.User{}).Where("id=?", user.ID).Update("role", "user").Error
+	return user, err
+}
+
+func (db *UserDB) UpdateToAdmin(user entity.User) (entity.User, error) {
+	err := db.connection.Model(&entity.User{}).Where("id=?", user.ID).Update("role", "admin").Error
+	return user, err
+}
+
+func (db *UserDB) UpdateToBlockUser(user entity.User) (entity.User, error) {
+	err := db.connection.Model(&entity.User{}).Where("id=?", user.ID).Update("role", "block_user").Error
+	return user, err
 }

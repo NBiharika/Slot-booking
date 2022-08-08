@@ -15,6 +15,9 @@ type UserController interface {
 	GetUser(ctx *gin.Context) (entity.User, error, int)
 	AddUser(ctx *gin.Context) (error, int)
 	GetAllUsers() ([]entity.User, error)
+	ChangeRoleToUser(ctx *gin.Context) error
+	ChangeRoleToAdmin(ctx *gin.Context) error
+	BlockUser(ctx *gin.Context) error
 }
 
 type userController struct {
@@ -74,4 +77,43 @@ func (c *userController) AddUser(ctx *gin.Context) (error, int) {
 
 func (c *userController) GetAllUsers() ([]entity.User, error) {
 	return c.service.GetAllUsers()
+}
+
+func (c *userController) ChangeRoleToUser(ctx *gin.Context) error {
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+
+	user, err := c.service.ChangeRoleToUser(jwtData.User)
+	fmt.Println(user)
+	if err != nil {
+		//err = errors.New("the user has already been assigned the 'user' role")
+		return err
+	}
+	return nil
+}
+
+func (c *userController) ChangeRoleToAdmin(ctx *gin.Context) error {
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+
+	user, err := c.service.ChangeRoleToAdmin(jwtData.User)
+	fmt.Println(user)
+	if err != nil {
+		//err = errors.New("the user has already been assigned the 'admin' role")
+		return err
+	}
+	return nil
+}
+
+func (c *userController) BlockUser(ctx *gin.Context) error {
+	userReq := ctx.Value("user_info")
+	jwtData := userReq.(*utils.JWTClaim)
+
+	user, err := c.service.BlockUser(jwtData.User)
+	fmt.Println(user)
+	if err != nil {
+		err = errors.New("the user has already been blocked")
+		return err
+	}
+	return nil
 }

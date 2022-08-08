@@ -24,6 +24,9 @@ func Server() {
 		authApis.PUT("cancel-booking", api.CancelBooking)
 		authApis.GET("user-slots", api.UserSlot)
 		authApis.GET("get-slot", api.GetSlot)
+		authApis.PUT("role-user", api.ChangeRoleToUser)
+		authApis.PUT("role-admin", api.ChangeRoleToAdmin)
+		authApis.PUT("block-user", api.BlockUser)
 	}
 
 	server.POST("/api/add-slot", api.AddSlot)
