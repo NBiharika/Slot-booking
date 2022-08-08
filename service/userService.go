@@ -10,9 +10,9 @@ type UserService interface {
 	GetUser(userID uint64) (entity.User, error)
 	FindUsingEmail(user entity.User) (entity.User, error)
 	GetAllUsers() ([]entity.User, error)
-	ChangeRoleToUser(user entity.User) (entity.User, error)
-	ChangeRoleToAdmin(user entity.User) (entity.User, error)
-	BlockUser(user entity.User) (entity.User, error)
+	ChangeRoleToUser(email string) error
+	ChangeRoleToAdmin(email string) error
+	BlockUser(email string) error
 }
 
 type userService struct {
@@ -42,14 +42,14 @@ func (service *userService) GetAllUsers() ([]entity.User, error) {
 	return service.user.FindAll()
 }
 
-func (service *userService) ChangeRoleToUser(user entity.User) (entity.User, error) {
-	return service.user.UpdateToUser(user)
+func (service *userService) ChangeRoleToUser(email string) error {
+	return service.user.UpdateToUser(email)
 }
 
-func (service *userService) ChangeRoleToAdmin(user entity.User) (entity.User, error) {
-	return service.user.UpdateToAdmin(user)
+func (service *userService) ChangeRoleToAdmin(email string) error {
+	return service.user.UpdateToAdmin(email)
 }
 
-func (service *userService) BlockUser(user entity.User) (entity.User, error) {
-	return service.user.UpdateToBlockUser(user)
+func (service *userService) BlockUser(email string) error {
+	return service.user.UpdateToBlockUser(email)
 }

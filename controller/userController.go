@@ -80,39 +80,39 @@ func (c *userController) GetAllUsers() ([]entity.User, error) {
 }
 
 func (c *userController) ChangeRoleToUser(ctx *gin.Context) error {
-	userReq := ctx.Value("user_info")
-	jwtData := userReq.(*utils.JWTClaim)
-
-	user, err := c.service.ChangeRoleToUser(jwtData.User)
-	fmt.Println(user)
+	m, err := utils.ReadRequestBody(ctx)
 	if err != nil {
-		//err = errors.New("the user has already been assigned the 'user' role")
+		return err
+	}
+	email := m["email"].(string)
+	err = c.service.ChangeRoleToUser(email)
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *userController) ChangeRoleToAdmin(ctx *gin.Context) error {
-	userReq := ctx.Value("user_info")
-	jwtData := userReq.(*utils.JWTClaim)
-
-	user, err := c.service.ChangeRoleToAdmin(jwtData.User)
-	fmt.Println(user)
+	m, err := utils.ReadRequestBody(ctx)
 	if err != nil {
-		//err = errors.New("the user has already been assigned the 'admin' role")
+		return err
+	}
+	email := m["email"].(string)
+	err = c.service.ChangeRoleToAdmin(email)
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *userController) BlockUser(ctx *gin.Context) error {
-	userReq := ctx.Value("user_info")
-	jwtData := userReq.(*utils.JWTClaim)
-
-	user, err := c.service.BlockUser(jwtData.User)
-	fmt.Println(user)
+	m, err := utils.ReadRequestBody(ctx)
 	if err != nil {
-		err = errors.New("the user has already been blocked")
+		return err
+	}
+	email := m["email"].(string)
+	err = c.service.BlockUser(email)
+	if err != nil {
 		return err
 	}
 	return nil

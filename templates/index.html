@@ -163,7 +163,7 @@
                     }
                 }).then(function (user) {
                     let role = user.user.role
-                    if (role == "admin") {
+                    if (role === "admin") {
                         fetch(allUsersURL, {
                             method: 'GET',
                         }).then(function (response) {
@@ -179,7 +179,7 @@
                         }).catch(function (error) {
                             console.warn(error);
                         })
-                    } else {
+                    } else if (role==="user") {
                         fetch(slotApiURL, {
                             method: 'GET',
                             headers: {
@@ -204,6 +204,9 @@
                         }).catch(function (error) {
                             console.warn(error);
                         })
+                    }else{
+                        alert("You have been blocked by the admin");
+                        window.location.href='/';
                     }
                 })
             }
@@ -216,73 +219,8 @@
     let bookSlotURL = '/api/v1/add-booking';
     let cancelSlotURL = '/api/v1/cancel-booking';
 
-    let changeRoleToUserURL = '/api/v1/role-user';
-    let changeRoleToAdminURL = '/api/v1/role-admin';
-    let blockUserURL = '/api/v1/block-user';
-
-    function changeRoleToUser(){
-        let token = getCookie("token")
-        if (token){
-            token = "Bearer " + token;
-            fetch(changeRoleToUserURL, {
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-            }).then(function (response){
-                if (response.ok){
-                    alert("Role assigned as user")
-                }
-            }).catch(function (error) {
-                alert("Role couldn't be assigned as user");
-                console.warn(error);
-            })
-        }
-    }
-    function changeRoleToAdmin(){
-        let token = getCookie("token")
-        if (token){
-            token = "Bearer " + token;
-            fetch(changeRoleToAdminURL, {
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-            }).then(function (response){
-                if (response.ok){
-                    alert("Role assigned as user")
-                }
-            }).catch(function (error) {
-                alert("Role couldn't be assigned as user");
-                console.warn(error);
-            })
-        }
-    }
-    function blockUser(){
-        let token = getCookie("token")
-        if (token){
-            token = "Bearer " + token;
-            fetch(blockUserURL, {
-                method: 'PUT',
-                headers: {
-                    'content-type': 'application/json',
-                    'Authorization': token,
-                },
-            }).then(function (response){
-                if (response.ok){
-                    alert("Role assigned as user")
-                }
-            }).catch(function (error) {
-                alert("Role couldn't be assigned as user");
-                console.warn(error);
-            })
-        }
-    }
-
     function bookSlot(startTime, date) {
-        if (confirm("Book this slot?")) {
+        if (confirm("Are you sure you want to book this slot?")) {
             let body = {"start_time": startTime, "date": date};
             let token = getCookie("token")
             if (token) {
@@ -317,7 +255,7 @@
     }
 
     function cancelSlot(startTime, date) {
-        if (confirm("Cancel this slot?")) {
+        if (confirm("Are you sure you want to cancel this slot?")) {
 
             let body = {"start_time": startTime, "date": date};
             let token = getCookie("token")
@@ -461,6 +399,71 @@
                 userLoginID.style.display = 'none';
                 document.getElementById("userSlot-api").innerHTML = userSlots;
             }).catch(function (error) {
+                console.warn(error);
+            })
+        }
+    }
+
+    let changeRoleToUserURL = '/api/role-user';
+    let changeRoleToAdminURL = '/api/role-admin';
+    let blockUserURL = '/api/block-user';
+
+    function changeRoleToUser(role, email) {
+        if (confirm("Are you sure you want to change the role to user?")) {
+            let body = {"email": email};
+            fetch(changeRoleToUserURL, {
+                method: 'PUT',
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    alert("Role changed to user")
+                    window.location.reload();
+                    document.getElementById(role).onclick = function () {
+                        changeRoleToAdmin(role, email);
+                    };
+                    document.getElementById(role).className = 'user-role';
+                }
+            }).catch(function (error) {
+                alert("Role couldn't be changed to user");
+                console.warn(error);
+            })
+        }
+    }
+
+    function changeRoleToAdmin(role, email) {
+        if (confirm("Are you sure you want to change the role to admin?")) {
+            let body = {"email": email};
+            fetch(changeRoleToAdminURL, {
+                method: 'PUT',
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    alert("Role changed to admin")
+                    window.location.reload();
+                    document.getElementById(role).onclick = function () {
+                        changeRoleToUser(role, email);
+                    };
+                    document.getElementById(role).className = 'admin-role';
+                }
+            }).catch(function (error) {
+                alert("Role couldn't be changed to admin");
+                console.warn(error);
+            })
+        }
+    }
+
+    function blockUser(email) {
+        if (confirm("Are you sure you want to block this user?")) {
+            let body = {"email": email};
+            fetch(blockUserURL, {
+                method: 'PUT',
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    alert("Blocked the user")
+                }
+            }).catch(function (error) {
+                alert("User couldn't be blocked");
                 console.warn(error);
             })
         }

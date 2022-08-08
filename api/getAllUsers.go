@@ -9,7 +9,7 @@ import (
 func GetAllUsers(ctx *gin.Context) {
 	AllUsers := AllUsers()
 
-	ctx.HTML(http.StatusOK, "allUsers.html", gin.H{
+	ctx.HTML(http.StatusOK, "admin.html", gin.H{
 		"title": "AllUsers",
 		"users": AllUsers,
 	})
