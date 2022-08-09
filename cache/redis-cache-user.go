@@ -10,6 +10,7 @@ import (
 type UserCache interface {
 	SetUser(ctx *gin.Context, key string, value entity.User)
 	GetUser(ctx *gin.Context, key string) (entity.User, error)
+	RemoveCache(ctx *gin.Context, key string) error
 }
 
 func NewRedisCache(host string, db int, exp time.Duration) UserCache {
@@ -43,4 +44,9 @@ func (cache *redisCache) GetUser(ctx *gin.Context, key string) (entity.User, err
 		panic(err)
 	}
 	return users, err
+}
+
+func (cache *redisCache) RemoveCache(ctx *gin.Context, key string) error {
+	client := cache.getClient()
+	return client.Del(ctx, key).Err()
 }

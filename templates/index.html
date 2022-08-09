@@ -493,6 +493,7 @@
                 body: JSON.stringify(body),
             }).then(function (response) {
                 if (response.ok) {
+                    window.location.reload();
                     alert("Blocked the user")
                 }
             }).catch(function (error) {
@@ -502,8 +503,25 @@
         }
     }
 
-    function blockedUser() {
-        alert("This user is blocked")
+    function blockedUser(role,email) {
+        if (confirm("Are you sure you want to unblock this user?")){
+            let body = {"email": email};
+            fetch(changeRoleToUserURL, {
+                method: 'PUT',
+                body: JSON.stringify(body),
+            }).then(function (response) {
+                if (response.ok) {
+                    alert("Role changed to user")
+                    window.location.reload();
+                }
+            }).catch(function (error) {
+                alert("User couldn't be unblocked");
+                console.warn(error);
+            })
+        }
+    }
+    function userBlocked(){
+        alert("This user is blocked!")
     }
 </script>
 </body>

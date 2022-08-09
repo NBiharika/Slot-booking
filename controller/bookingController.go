@@ -57,11 +57,6 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 		c.userCache.SetUser(ctx, key, user)
 	}
 
-	if user.Role == "admin" || user.Role == "blocked_user" {
-		err = errors.New("admin and blocked users can't book a slot")
-		return err
-	}
-
 	m, err := utils.ReadRequestBody(ctx)
 	startTime := m["start_time"].(string)
 	date := m["date"].(string)
@@ -118,10 +113,6 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		c.userCache.SetUser(ctx, key, user)
 	}
 
-	if user.Role == "admin" || user.Role == "blocked_user" {
-		err = errors.New("admin and blocked users can't cancel a slot")
-		return "", err
-	}
 	m, err := utils.ReadRequestBody(ctx)
 
 	startTime := m["start_time"].(string)

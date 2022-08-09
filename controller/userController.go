@@ -89,7 +89,13 @@ func (c *userController) ChangeRoleToUser(ctx *gin.Context) error {
 		return err
 	}
 	email := m["email"].(string)
-	err = c.service.ChangeRoleToUser(email)
+	user, err := c.service.ChangeRoleToUser(email)
+	if err != nil {
+		return err
+	}
+
+	key := fmt.Sprintf("user_data_%v", user.ID)
+	err = c.userCache.RemoveCache(ctx, key)
 	if err != nil {
 		return err
 	}
@@ -102,7 +108,13 @@ func (c *userController) ChangeRoleToAdmin(ctx *gin.Context) error {
 		return err
 	}
 	email := m["email"].(string)
-	err = c.service.ChangeRoleToAdmin(email)
+	user, err := c.service.ChangeRoleToAdmin(email)
+	if err != nil {
+		return err
+	}
+
+	key := fmt.Sprintf("user_data_%v", user.ID)
+	err = c.userCache.RemoveCache(ctx, key)
 	if err != nil {
 		return err
 	}
@@ -115,7 +127,13 @@ func (c *userController) BlockUser(ctx *gin.Context) error {
 		return err
 	}
 	email := m["email"].(string)
-	err = c.service.BlockUser(email)
+	user, err := c.service.BlockUser(email)
+	if err != nil {
+		return err
+	}
+
+	key := fmt.Sprintf("user_data_%v", user.ID)
+	err = c.userCache.RemoveCache(ctx, key)
 	if err != nil {
 		return err
 	}

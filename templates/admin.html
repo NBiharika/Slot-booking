@@ -36,12 +36,12 @@
                                 onClick="changeRoleToUser({{$value.role}},{{$value.email}})">{{$value.role}}</button>
                     {{else if eq $value.role "blocked_user"}}
                         <button id="{{$value.role}}" type="button" class="blocked-user"
-                                onClick="changeRoleToUser({{$value.role}},{{$value.email}})">{{$value.role}}</button>
+                                onClick="userBlocked()">blocked user</button>
                     {{end}}
                 </td>
                 <td class="block">
                     {{if eq $value.role "blocked_user"}}
-                        <button id="user-role" type="button" class="block-user" onClick="blockedUser()">User Blocked
+                        <button id="user-role" type="button" class="block-user" onClick="blockedUser({{$value.role}},{{$value.email}})">UnBlock User
                         </button>
                     {{else}}
                         <button id="user-role" type="button" class="block-user"

@@ -10,9 +10,9 @@ type UserRepository interface {
 	Find(userID uint64) (entity.User, error)
 	FindUsingEmail(user entity.User) (entity.User, error)
 	FindAll() ([]entity.User, error)
-	UpdateToUser(email string) error
-	UpdateToAdmin(email string) error
-	UpdateToBlockUser(email string) error
+	UpdateToUser(email string) (entity.User, error)
+	UpdateToAdmin(email string) (entity.User, error)
+	UpdateToBlockUser(email string) (entity.User, error)
 }
 
 type UserDB struct {
@@ -49,17 +49,23 @@ func (db *UserDB) FindAll() ([]entity.User, error) {
 	return users, err
 }
 
-func (db *UserDB) UpdateToUser(email string) error {
+func (db *UserDB) UpdateToUser(email string) (entity.User, error) {
+	var user entity.User
 	err := db.connection.Model(&entity.User{}).Where("email=?", email).Update("role", "user").Error
-	return err
+	err = db.connection.Model(&entity.User{}).Where("email=?", email).Find(&user).Error
+	return user, err
 }
 
-func (db *UserDB) UpdateToAdmin(email string) error {
+func (db *UserDB) UpdateToAdmin(email string) (entity.User, error) {
+	var user entity.User
 	err := db.connection.Model(&entity.User{}).Where("email=?", email).Update("role", "admin").Error
-	return err
+	err = db.connection.Model(&entity.User{}).Where("email=?", email).Find(&user).Error
+	return user, err
 }
 
-func (db *UserDB) UpdateToBlockUser(email string) error {
+func (db *UserDB) UpdateToBlockUser(email string) (entity.User, error) {
+	var user entity.User
 	err := db.connection.Model(&entity.User{}).Where("email=?", email).Update("role", "blocked_user").Error
-	return err
+	err = db.connection.Model(&entity.User{}).Where("email=?", email).Find(&user).Error
+	return user, err
 }
