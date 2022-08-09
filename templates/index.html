@@ -159,6 +159,7 @@
                     if (response.ok) {
                         return response.json();
                     } else {
+                        alert("Oops, you are blocked!!")
                         return Promise.reject(response);
                     }
                 }).then(function (user) {
@@ -179,7 +180,7 @@
                         }).catch(function (error) {
                             console.warn(error);
                         })
-                    } else if (role==="user") {
+                    } else if (role === "user") {
                         fetch(slotApiURL, {
                             method: 'GET',
                             headers: {
@@ -204,9 +205,6 @@
                         }).catch(function (error) {
                             console.warn(error);
                         })
-                    }else{
-                        alert("You have been blocked by the admin");
-                        window.location.href='/';
                     }
                 })
             }
@@ -320,9 +318,9 @@
     function checkCookie() {
         let token = getCookie("token");
         if (token !== "") {
-            if (token) {
+            if(token) {
                 token = "Bearer " + token;
-                fetch(slotApiURL, {
+                fetch('/api/v1/user', {
                     method: 'GET',
                     headers: {
                         'content-type': 'application/json',
@@ -331,21 +329,54 @@
                     }
                 }).then(function (response) {
                     if (response.ok) {
-                        return response.text();
+                        return response.json();
                     } else {
                         return Promise.reject(response);
                     }
-                }).then(function (slots) {
-                    let userLoginID = document.getElementById("user-login");
-                    userLoginID.style.display = 'none';
-                    document.getElementById("slot-api").innerHTML = slots;
-                    document.getElementById("slot-api").innerHTML = slots;
-                    let dateID = document.getElementById(prevDate + "-slots")
-                    dateID.style.display = 'block'
-                    document.getElementById(prevDate).style.background = 'linear-gradient(to right, #ff105f, #ffad06)'
-                    localStorage.setItem(prevDate, prevDate)
-                }).catch(function (error) {
-                    console.warn(error);
+                }).then(function (user) {
+                    let role = user.user.role
+                    if (role === "admin") {
+                        fetch(allUsersURL, {
+                            method: 'GET',
+                        }).then(function (response) {
+                            if (response.ok) {
+                                return response.text();
+                            } else {
+                                return Promise.reject(response);
+                            }
+                        }).then(function (users) {
+                            let userLoginID = document.getElementById("user-login");
+                            userLoginID.style.display = 'none';
+                            document.getElementById("allUsers-api").innerHTML = users;
+                        }).catch(function (error) {
+                            console.warn(error);
+                        })
+                    } else if (role === "user") {
+                        fetch(slotApiURL, {
+                            method: 'GET',
+                            headers: {
+                                'content-type': 'application/json',
+                                'Authorization': token,
+                                'Accept': 'application/json',
+                            }
+                        }).then(function (response) {
+                            if (response.ok) {
+                                return response.text();
+                            } else {
+                                return Promise.reject(response);
+                            }
+                        }).then(function (slots) {
+                            let userLoginID = document.getElementById("user-login");
+                            userLoginID.style.display = 'none';
+                            document.getElementById("slot-api").innerHTML = slots;
+                            let dateID = document.getElementById(prevDate + "-slots")
+                            dateID.style.display = 'block'
+                            document.getElementById(prevDate).style.background = 'linear-gradient(to right, #ff105f, #ffad06)'
+                            localStorage.setItem(prevDate, prevDate)
+                        }).catch(function (error) {
+                            console.warn(error);
+                        })
+                    }
                 })
             }
         }
@@ -417,6 +448,7 @@
             }).then(function (response) {
                 if (response.ok) {
                     alert("Role changed to user")
+                    window.location.href = '/';
                     window.location.reload();
                     document.getElementById(role).onclick = function () {
                         changeRoleToAdmin(role, email);
@@ -440,6 +472,7 @@
                 if (response.ok) {
                     alert("Role changed to admin")
                     window.location.reload();
+                    document.getElementById(role).name
                     document.getElementById(role).onclick = function () {
                         changeRoleToUser(role, email);
                     };
@@ -467,6 +500,10 @@
                 console.warn(error);
             })
         }
+    }
+
+    function blockedUser() {
+        alert("This user is blocked")
     }
 </script>
 </body>

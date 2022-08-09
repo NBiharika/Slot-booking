@@ -49,6 +49,10 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	if err != nil {
 		return entity.User{}, err, http.StatusInternalServerError
 	}
+	if user.Role == "blocked_user" {
+		err = errors.New("oops, you are blocked")
+		return entity.User{}, err, http.StatusBadRequest
+	}
 
 	c.userCache.SetUser(ctx, key, user)
 	return user, err, http.StatusOK

@@ -40,9 +40,14 @@
                     {{end}}
                 </td>
                 <td class="block">
-                    <button id="user-role" type="button" class="block-user"
-                            onClick="blockUser({{$value.email}})">Block User
-                    </button>
+                    {{if eq $value.role "blocked_user"}}
+                        <button id="user-role" type="button" class="block-user" onClick="blockedUser()">User Blocked
+                        </button>
+                    {{else}}
+                        <button id="user-role" type="button" class="block-user"
+                                onClick="blockUser({{$value.email}})">Block User
+                        </button>
+                    {{end}}
                 </td>
             </tr>
         {{end}}
