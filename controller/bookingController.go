@@ -21,7 +21,7 @@ type BookingController interface {
 	FindAll() []entity.Booking
 	BookSlot(ctx *gin.Context) error
 	CancelBooking(ctx *gin.Context) (string, error)
-	GetUserSlot(ctx *gin.Context) ([]entity.Slot, error)
+	GetUserSlot(ctx *gin.Context) (bool, []entity.Slot, error)
 }
 
 type Controller struct {
@@ -57,8 +57,12 @@ func (c *Controller) BookSlot(ctx *gin.Context) error {
 		c.userCache.SetUser(ctx, key, user)
 	}
 
-	m, err := utils.ReadRequestBody(ctx)
+	if user.Role == "blocked_user" {
+		err = errors.New("blocked users can't book a slot")
+		return err
+	}
 
+	m, err := utils.ReadRequestBody(ctx)
 	startTime := m["start_time"].(string)
 	date := m["date"].(string)
 
@@ -114,6 +118,10 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 		c.userCache.SetUser(ctx, key, user)
 	}
 
+	if user.Role == "blocked_user" {
+		err = errors.New("blocked users can't cancel a slot")
+		return "", err
+	}
 	m, err := utils.ReadRequestBody(ctx)
 
 	startTime := m["start_time"].(string)
@@ -153,19 +161,19 @@ func (c *Controller) CancelBooking(ctx *gin.Context) (string, error) {
 	return message, err
 }
 
-func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
+func (c *Controller) GetUserSlot(ctx *gin.Context) (bool, []entity.Slot, error) {
 	userReq := ctx.Value("user_info")
 	jwtData := userReq.(*utils.JWTClaim)
 
 	user, err := c.userService.GetUser(jwtData.User.ID)
 	if err != nil {
-		return []entity.Slot{}, err
+		return user.Role == "admin", []entity.Slot{}, err
 	}
 
 	var bookedSlots []entity.Booking
 	bookedSlots, err = c.service.GetUserBookings(user.ID)
 	if err != nil {
-		return nil, err
+		return user.Role == "admin", nil, err
 	}
 
 	var slotIDs []uint64
@@ -174,8 +182,7 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) ([]entity.Slot, error) {
 	}
 	slots, err := c.slotService.GetSlots(slotIDs)
 	if err != nil {
-		return slots, err
+		return user.Role == "admin", slots, err
 	}
-
-	return slots, err
+	return user.Role == "admin", slots, err
 }

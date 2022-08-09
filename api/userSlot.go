@@ -17,7 +17,7 @@ func UserSlot(ctx *gin.Context) {
 }
 
 func GetUserBookedSlots(ctx *gin.Context) map[string]map[uint64]interface{} {
-	userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
+	_, userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
 	loc, _ := time.LoadLocation("Asia/Kolkata")
 
 	m := make(map[string]map[uint64]interface{})

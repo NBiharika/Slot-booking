@@ -1,0 +1,57 @@
+<html>
+<head>
+    <title>Welcome to Admin Page</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div id="header" class="header">
+    <div style="text-align: center;font-size: xx-large">
+        <button id="book-slots" class="book-slot" onClick="bookSlotPage()">Book Slots</button>
+        <br>Welcome to Admin Panel!
+        <button id="logOut" class="admin-logOut" onClick="logOut()">Log Out</button>
+    </div>
+</div>
+<div id="data" class="data">
+    <table class="table">
+        <thead>
+        <tr class="user-info">
+            <td>Name</td>
+            <td>Email ID</td>
+            <td>Role</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        {{range $key,$value:= .users}}
+            <tr class="user-info-var">
+                <td class="user-name">{{$value.firstName}} {{$value.lastName}}</td>
+                <td class="user-email">{{$value.email}}</td>
+                <td class="role">
+                    {{if eq $value.role "user"}}
+                        <button id="{{$value.role}}" type="button" class="user-role"
+                                onClick="changeRoleToAdmin({{$value.role}},{{$value.email}})">{{$value.role}}</button>
+                    {{else if eq $value.role "admin"}}
+                        <button id="{{$value.role}}" type="button" class="admin-role"
+                                onClick="changeRoleToUser({{$value.role}},{{$value.email}})">{{$value.role}}</button>
+                    {{else if eq $value.role "blocked_user"}}
+                        <button id="{{$value.role}}" type="button" class="blocked-user"
+                                onClick="userBlocked()">blocked user</button>
+                    {{end}}
+                </td>
+                <td class="block">
+                    {{if eq $value.role "blocked_user"}}
+                        <button id="user-role" type="button" class="block-user" onClick="unblockUser({{$value.email}})">Unblock
+                        </button>
+                    {{else}}
+                        <button id="user-role" type="button" class="block-user"
+                                onClick="blockUser({{$value.role}},{{$value.email}})">Block
+                        </button>
+                    {{end}}
+                </td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

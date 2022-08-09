@@ -1,0 +1,80 @@
+body{
+    margin: 0px;
+    border: 0px;
+    background: lightblue;
+}
+.header{
+    width: 100%;
+    height: 120px;
+    background: black;
+    color: white;
+}
+.admin-logo{
+    display: block;
+    font-size: xx-large;
+}
+.data{
+    height: 700px;
+    background: lightblue;
+}
+.admin-logOut{
+    cursor: pointer;
+    text-align: center;
+    color: red;
+    font-size: 30px;
+    float: right;
+}
+.book-slot{
+    cursor: pointer;
+    text-align: center;
+    color: red;
+    font-size: 30px;
+    float: left;
+    margin-top: 40px;
+}
+.table{
+    width: 100%;
+    border-collapse: collapse;
+}
+.user-info{
+    color: black;
+    font-size: 20px;
+    font-weight: bolder;
+}
+.user-info-var{
+    font-size: 16px;
+    font-weight: bold;
+}
+tr{
+    border-bottom: 1px solid blueviolet;
+}
+thead td{
+    background: white;
+    text-align: start;
+    padding: 20px;
+}
+tbody tr td{
+    padding: 20px 20px;
+}
+.user-role, .admin-role, .blocked-user{
+    padding: 10px 30px;
+    color: darkgoldenrod;
+    font-size: 14px;
+    font-weight: bold;
+}
+.user-role:hover, .admin-role:hover, .blocked-user:hover{
+    color: gray;
+}
+.block-user{
+    padding: 0;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    background: lightblue;
+    color: #554cd1;
+}
+.block-user:hover{
+    color: gray;
+}
+

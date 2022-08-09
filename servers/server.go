@@ -34,11 +34,16 @@ func Server() {
 
 	server.POST("api/generate-token", api.GenerateToken)
 
+	server.GET("/", controller.LoginAndRegister)
+
+	server.GET("api/all-users", api.GetAllUsers)
+
+	server.PUT("/api/switch-role", api.SwitchRoles)
+
 	secured := server.Group("/secured").Use(middleware.Auth())
 	{
 		secured.GET("/ping", controller.Ping)
 	}
-	server.GET("/", controller.LoginAndRegister)
 
 	server.Run(":8080")
 }
