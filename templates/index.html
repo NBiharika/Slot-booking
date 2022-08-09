@@ -439,6 +439,37 @@
     let changeRoleToAdminURL = '/api/role-admin';
     let blockUserURL = '/api/block-user';
 
+    function bookSlotPage(){
+        let token = getCookie("token");
+        if (token) {
+            token = "Bearer " + token;
+            fetch(slotApiURL, {
+                method: 'GET',
+                headers: {
+                    'content-type': 'application/json',
+                    'Authorization': token,
+                    'Accept': 'application/json',
+                }
+            }).then(function (response) {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    return Promise.reject(response);
+                }
+            }).then(function (slots) {
+                let userLoginID = document.getElementById("user-login");
+                userLoginID.style.display = 'none';
+                document.getElementById("slot-api").innerHTML = slots;
+                let dateID = document.getElementById(prevDate + "-slots")
+                dateID.style.display = 'block'
+                document.getElementById(prevDate).style.background = 'linear-gradient(to right, #ff105f, #ffad06)'
+                localStorage.setItem(prevDate, prevDate)
+            }).catch(function (error) {
+                console.warn(error);
+            })
+        }
+    }
+
     function changeRoleToUser(role, email) {
         if (confirm("Are you sure you want to change the role to user?")) {
             let body = {"email": email};
@@ -484,6 +515,7 @@
             })
         }
     }
+
 
     function blockUser(email) {
         if (confirm("Are you sure you want to block this user?")) {

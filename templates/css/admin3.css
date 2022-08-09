@@ -19,10 +19,18 @@ body{
 }
 .admin-logOut{
     cursor: pointer;
-    text-align: right;
+    text-align: center;
     color: red;
-    font-size: large;
+    font-size: 30px;
     float: right;
+}
+.book-slot{
+    cursor: pointer;
+    text-align: center;
+    color: red;
+    font-size: 30px;
+    float: left;
+    margin-top: 40px;
 }
 .table{
     width: 100%;

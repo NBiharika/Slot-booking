@@ -1,11 +1,12 @@
 <html>
 <head>
     <title>Welcome to Admin Page</title>
-    <link rel="stylesheet" href="css/admin2.css">
+    <link rel="stylesheet" href="css/admin3.css">
 </head>
 <body>
 <div id="header" class="header">
     <div style="text-align: center;font-size: xx-large">
+        <button id="book-slots" class="book-slot" onClick="bookSlotPage()">Book Slots</button>
         <br>Welcome to Admin Panel!
         <button id="logOut" class="admin-logOut" onClick="logOut()">Log Out</button>
     </div>
@@ -14,7 +15,6 @@
     <table class="table">
         <thead>
         <tr class="user-info">
-            <td>User ID</td>
             <td>Name</td>
             <td>Email ID</td>
             <td>Role</td>
@@ -24,7 +24,6 @@
         <tbody>
         {{range $key,$value:= .users}}
             <tr class="user-info-var">
-                <td class="user-id">{{$key}}</td>
                 <td class="user-name">{{$value.firstName}} {{$value.lastName}}</td>
                 <td class="user-email">{{$value.email}}</td>
                 <td class="role">
