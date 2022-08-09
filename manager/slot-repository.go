@@ -30,7 +30,7 @@ func (db *SlotDB) Create(slot []entity.Slot) error {
 
 func (db *SlotDB) FindAll(dates []string) ([]entity.Slot, error) {
 	var slots []entity.Slot
-	err := db.connection.Where("date in (?)", dates).Order("date").Order("start_time").Find(&slots).Error
+	err := db.connection.Where("date in (?)", dates).Order("id").Find(&slots).Error
 	return slots, err
 }
 
@@ -40,7 +40,7 @@ func (db *SlotDB) Find(slot entity.Slot) (entity.Slot, error) {
 }
 func (db *SlotDB) GetSlots(slotIDs []uint64) ([]entity.Slot, error) {
 	var slot []entity.Slot
-	err := db.connection.Model(&entity.Slot{}).Where("id in (?)", slotIDs).Order("date").Order("start_time").Find(&slot).Error
+	err := db.connection.Model(&entity.Slot{}).Where("id in (?)", slotIDs).Order("id").Find(&slot).Error
 	return slot, err
 }
 
