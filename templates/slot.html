@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>{{.title}}</title>
-    <link rel="stylesheet" href="css/slots.css">
+    <link rel="stylesheet" href="css/slots1.css">
 </head>
 <body>
 <div id="userSlot-api"></div>
@@ -25,7 +25,9 @@
             {{end}}
         </div>
     {{end}}
-    <button id="back" class="back" onClick="window.location.reload();">Back</button>
+        {{if eq .isAdmin true}}
+            <button id="back" class="back" onClick="window.location.reload();">Back</button>
+        {{end}}
     <button id="getUserSlots-api" class="booked-slots" onClick="getUserSlots()">All Booked Slots</button>
     <button id="logOut" class="userLogout" onClick="logOut()">Log Out</button>
 </div>

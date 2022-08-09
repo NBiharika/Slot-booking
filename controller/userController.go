@@ -15,9 +15,7 @@ type UserController interface {
 	GetUser(ctx *gin.Context) (entity.User, error, int)
 	AddUser(ctx *gin.Context) (error, int)
 	GetAllUsers() ([]entity.User, error)
-	ChangeRoleToUser(ctx *gin.Context) error
-	ChangeRoleToAdmin(ctx *gin.Context) error
-	BlockUser(ctx *gin.Context) error
+	SwitchRoles(ctx *gin.Context) error
 }
 
 type userController struct {
@@ -83,59 +81,22 @@ func (c *userController) GetAllUsers() ([]entity.User, error) {
 	return c.service.GetAllUsers()
 }
 
-func (c *userController) ChangeRoleToUser(ctx *gin.Context) error {
+func (c *userController) SwitchRoles(ctx *gin.Context) error {
 	m, err := utils.ReadRequestBody(ctx)
 	if err != nil {
 		return err
 	}
 	email := m["email"].(string)
-	user, err := c.service.ChangeRoleToUser(email)
+	role := m["role"].(string)
+	user, err := c.service.SwitchRoles(email, role)
 	if err != nil {
 		return err
 	}
-
 	key := fmt.Sprintf("user_data_%v", user.ID)
 	err = c.userCache.RemoveCache(ctx, key)
 	if err != nil {
 		return err
 	}
 	return nil
-}
 
-func (c *userController) ChangeRoleToAdmin(ctx *gin.Context) error {
-	m, err := utils.ReadRequestBody(ctx)
-	if err != nil {
-		return err
-	}
-	email := m["email"].(string)
-	user, err := c.service.ChangeRoleToAdmin(email)
-	if err != nil {
-		return err
-	}
-
-	key := fmt.Sprintf("user_data_%v", user.ID)
-	err = c.userCache.RemoveCache(ctx, key)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *userController) BlockUser(ctx *gin.Context) error {
-	m, err := utils.ReadRequestBody(ctx)
-	if err != nil {
-		return err
-	}
-	email := m["email"].(string)
-	user, err := c.service.BlockUser(email)
-	if err != nil {
-		return err
-	}
-
-	key := fmt.Sprintf("user_data_%v", user.ID)
-	err = c.userCache.RemoveCache(ctx, key)
-	if err != nil {
-		return err
-	}
-	return nil
 }

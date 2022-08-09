@@ -59,6 +59,7 @@
     let slotApiURL = '/api/v1/get-slot';
     let getUserSlotsApiURL = '/api/v1/user-slots';
     let allUsersURL = '/api/all-users';
+    let switchRolesURL = '/api/switch-role';
     let globalToken;
 
     const myForm = document.getElementById('registerUser');
@@ -435,10 +436,6 @@
         }
     }
 
-    let changeRoleToUserURL = '/api/role-user';
-    let changeRoleToAdminURL = '/api/role-admin';
-    let blockUserURL = '/api/block-user';
-
     function bookSlotPage(){
         let token = getCookie("token");
         if (token) {
@@ -472,8 +469,8 @@
 
     function changeRoleToUser(role, email) {
         if (confirm("Are you sure you want to change the role to user?")) {
-            let body = {"email": email};
-            fetch(changeRoleToUserURL, {
+            let body = {"email": email, "role": "user"};
+            fetch(switchRolesURL, {
                 method: 'PUT',
                 body: JSON.stringify(body),
             }).then(function (response) {
@@ -495,8 +492,8 @@
 
     function changeRoleToAdmin(role, email) {
         if (confirm("Are you sure you want to change the role to admin?")) {
-            let body = {"email": email};
-            fetch(changeRoleToAdminURL, {
+            let body = {"email": email, "role": "admin"};
+            fetch(switchRolesURL, {
                 method: 'PUT',
                 body: JSON.stringify(body),
             }).then(function (response) {
@@ -517,10 +514,10 @@
     }
 
 
-    function blockUser(email) {
+    function blockUser(role, email) {
         if (confirm("Are you sure you want to block this user?")) {
-            let body = {"email": email};
-            fetch(blockUserURL, {
+            let body = {"email": email, "role": "blocked_user"};
+            fetch(switchRolesURL, {
                 method: 'PUT',
                 body: JSON.stringify(body),
             }).then(function (response) {
@@ -535,10 +532,10 @@
         }
     }
 
-    function blockedUser(role,email) {
+    function unblockUser(email) {
         if (confirm("Are you sure you want to unblock this user?")){
-            let body = {"email": email};
-            fetch(changeRoleToUserURL, {
+            let body = {"email": email, "role": "user"};
+            fetch(switchRolesURL, {
                 method: 'PUT',
                 body: JSON.stringify(body),
             }).then(function (response) {

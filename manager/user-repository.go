@@ -3,6 +3,7 @@ package manager
 import (
 	"Slot_booking/entity"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UserRepository interface {
@@ -10,9 +11,7 @@ type UserRepository interface {
 	Find(userID uint64) (entity.User, error)
 	FindUsingEmail(user entity.User) (entity.User, error)
 	FindAll() ([]entity.User, error)
-	UpdateToUser(email string) (entity.User, error)
-	UpdateToAdmin(email string) (entity.User, error)
-	UpdateToBlockUser(email string) (entity.User, error)
+	UpdateToSwitchRoles(email string, role string) (entity.User, error)
 }
 
 type UserDB struct {
@@ -49,23 +48,8 @@ func (db *UserDB) FindAll() ([]entity.User, error) {
 	return users, err
 }
 
-func (db *UserDB) UpdateToUser(email string) (entity.User, error) {
+func (db *UserDB) UpdateToSwitchRoles(email string, role string) (entity.User, error) {
 	var user entity.User
-	err := db.connection.Model(&entity.User{}).Where("email=?", email).Update("role", "user").Error
-	err = db.connection.Model(&entity.User{}).Where("email=?", email).Find(&user).Error
-	return user, err
-}
-
-func (db *UserDB) UpdateToAdmin(email string) (entity.User, error) {
-	var user entity.User
-	err := db.connection.Model(&entity.User{}).Where("email=?", email).Update("role", "admin").Error
-	err = db.connection.Model(&entity.User{}).Where("email=?", email).Find(&user).Error
-	return user, err
-}
-
-func (db *UserDB) UpdateToBlockUser(email string) (entity.User, error) {
-	var user entity.User
-	err := db.connection.Model(&entity.User{}).Where("email=?", email).Update("role", "blocked_user").Error
-	err = db.connection.Model(&entity.User{}).Where("email=?", email).Find(&user).Error
+	err := db.connection.Model(&user).Clauses(clause.Returning{}).Where("email=?", email).Update("role", role).Error
 	return user, err
 }

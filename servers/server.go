@@ -38,11 +38,7 @@ func Server() {
 
 	server.GET("api/all-users", api.GetAllUsers)
 
-	server.PUT("/api/role-user", api.ChangeRoleToUser)
-
-	server.PUT("/api/role-admin", api.ChangeRoleToAdmin)
-
-	server.PUT("/api/block-user", api.BlockUser)
+	server.PUT("/api/switch-role", api.SwitchRoles)
 
 	secured := server.Group("/secured").Use(middleware.Auth())
 	{
