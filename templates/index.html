@@ -454,8 +454,8 @@
                     return Promise.reject(response);
                 }
             }).then(function (slots) {
-                let userLoginID = document.getElementById("allUsers-api");
-                userLoginID.style.display = 'none';
+                let adminPage = document.getElementById("allUsers-api");
+                adminPage.style.display = 'none';
                 document.getElementById("slot-api").innerHTML = slots;
                 let dateID = document.getElementById(prevDate + "-slots")
                 dateID.style.display = 'block'
