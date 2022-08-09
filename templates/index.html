@@ -454,7 +454,7 @@
                     return Promise.reject(response);
                 }
             }).then(function (slots) {
-                let userLoginID = document.getElementById("user-login");
+                let userLoginID = document.getElementById("allUsers-api");
                 userLoginID.style.display = 'none';
                 document.getElementById("slot-api").innerHTML = slots;
                 let dateID = document.getElementById(prevDate + "-slots")
@@ -549,6 +549,7 @@
             })
         }
     }
+
     function userBlocked(){
         alert("This user is blocked!")
     }
