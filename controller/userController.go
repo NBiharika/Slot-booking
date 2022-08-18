@@ -16,6 +16,7 @@ type UserController interface {
 	AddUser(ctx *gin.Context) (error, int)
 	GetAllUsers() ([]entity.User, error)
 	SwitchRoles(ctx *gin.Context) error
+	SwitchStatus(ctx *gin.Context) error
 }
 
 type userController struct {
@@ -47,7 +48,7 @@ func (c *userController) GetUser(ctx *gin.Context) (entity.User, error, int) {
 	if err != nil {
 		return entity.User{}, err, http.StatusInternalServerError
 	}
-	if user.Role == "blocked_user" {
+	if user.Status == "blocked" {
 		err = errors.New("oops, you are blocked")
 		return entity.User{}, err, http.StatusBadRequest
 	}
@@ -98,5 +99,25 @@ func (c *userController) SwitchRoles(ctx *gin.Context) error {
 		return err
 	}
 	return nil
+}
 
+func (c *userController) SwitchStatus(ctx *gin.Context) error {
+	m, err := utils.ReadRequestBody(ctx)
+	if err != nil {
+		return err
+	}
+	email := m["email"].(string)
+	status := m["status"].(string)
+	user, err := c.service.SwitchStatus(email, status)
+	if err != nil {
+		err = errors.New("can't block the owner")
+		return err
+	}
+
+	key := fmt.Sprintf("user_data_%v", user.ID)
+	err = c.userCache.RemoveCache(ctx, key)
+	if err != nil {
+		return err
+	}
+	return nil
 }

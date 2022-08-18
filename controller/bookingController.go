@@ -167,13 +167,13 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) (bool, []entity.Slot, error) 
 
 	user, err := c.userService.GetUser(jwtData.User.ID)
 	if err != nil {
-		return user.Role == "admin", []entity.Slot{}, err
+		return user.Role != "user", []entity.Slot{}, err
 	}
 
 	var bookedSlots []entity.Booking
 	bookedSlots, err = c.service.GetUserBookings(user.ID)
 	if err != nil {
-		return user.Role == "admin", nil, err
+		return user.Role != "user", nil, err
 	}
 
 	var slotIDs []uint64
@@ -182,7 +182,7 @@ func (c *Controller) GetUserSlot(ctx *gin.Context) (bool, []entity.Slot, error) 
 	}
 	slots, err := c.slotService.GetSlots(slotIDs)
 	if err != nil {
-		return user.Role == "admin", slots, err
+		return user.Role != "user", slots, err
 	}
-	return user.Role == "admin", slots, err
+	return user.Role != "user", slots, err
 }

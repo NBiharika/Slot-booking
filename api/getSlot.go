@@ -8,12 +8,12 @@ import (
 )
 
 func GetSlot(ctx *gin.Context) {
-	finalUserSlots, isAdmin := FinalUserSlots(ctx)
+	finalUserSlots, notUser := FinalUserSlots(ctx)
 
 	ctx.HTML(http.StatusOK, "slot.html", gin.H{
 		"title":   "slots",
 		"slots":   finalUserSlots,
-		"isAdmin": isAdmin,
+		"notUser": notUser,
 	})
 }
 
@@ -23,7 +23,7 @@ func FinalUserSlots(ctx *gin.Context) (map[string]map[uint64]interface{}, bool) 
 	loc, _ := time.LoadLocation("Asia/Kolkata")
 
 	slots := start_up.SlotController.FindAll(ctx, todayTime, endTime)
-	isAdmin, userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
+	notUser, userSlots, _ := start_up.BookingController.GetUserSlot(ctx)
 
 	m := make(map[string]map[uint64]interface{})
 
@@ -57,5 +57,5 @@ func FinalUserSlots(ctx *gin.Context) (map[string]map[uint64]interface{}, bool) 
 			}
 		}
 	}
-	return m, isAdmin
+	return m, notUser
 }

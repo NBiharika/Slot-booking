@@ -12,6 +12,7 @@ type UserRepository interface {
 	FindUsingEmail(user entity.User) (entity.User, error)
 	FindAll() ([]entity.User, error)
 	UpdateToSwitchRoles(email string, role string) (entity.User, error)
+	UpdateToSwitchStatus(email string, status string) (entity.User, error)
 }
 
 type UserDB struct {
@@ -50,6 +51,12 @@ func (db *UserDB) FindAll() ([]entity.User, error) {
 
 func (db *UserDB) UpdateToSwitchRoles(email string, role string) (entity.User, error) {
 	var user entity.User
-	err := db.connection.Model(&user).Clauses(clause.Returning{}).Where("email=?", email).Update("role", role).Error
+	err := db.connection.Model(&user).Clauses(clause.Returning{}).Where("email=? and status=? and role!=?", email, "active", "owner").Update("role", role).Error
+	return user, err
+}
+
+func (db *UserDB) UpdateToSwitchStatus(email string, status string) (entity.User, error) {
+	var user entity.User
+	err := db.connection.Model(&user).Clauses(clause.Returning{}).Where("email=? and role!=?", email, "owner").Update("status", status).Error
 	return user, err
 }
