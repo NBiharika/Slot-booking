@@ -25,7 +25,7 @@
             {{end}}
         </div>
     {{end}}
-        {{if eq .isAdmin true}}
+        {{if eq .notUser true}}
             <button id="back" class="back" onClick="window.location.reload();">Back</button>
         {{end}}
     <button id="getUserSlots-api" class="booked-slots" onClick="getUserSlots()">All Booked Slots</button>

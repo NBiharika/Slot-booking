@@ -11,6 +11,7 @@ type UserService interface {
 	FindUsingEmail(user entity.User) (entity.User, error)
 	GetAllUsers() ([]entity.User, error)
 	SwitchRoles(email string, role string) (entity.User, error)
+	SwitchStatus(email string, status string) (entity.User, error)
 }
 
 type userService struct {
@@ -42,4 +43,8 @@ func (service *userService) GetAllUsers() ([]entity.User, error) {
 
 func (service *userService) SwitchRoles(email string, role string) (entity.User, error) {
 	return service.user.UpdateToSwitchRoles(email, role)
+}
+
+func (service *userService) SwitchStatus(email string, status string) (entity.User, error) {
+	return service.user.UpdateToSwitchStatus(email, status)
 }

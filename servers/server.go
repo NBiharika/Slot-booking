@@ -40,6 +40,8 @@ func Server() {
 
 	server.PUT("/api/switch-role", api.SwitchRoles)
 
+	server.PUT("/api/switch-status", api.SwitchStatus)
+
 	secured := server.Group("/secured").Use(middleware.Auth())
 	{
 		secured.GET("/ping", controller.Ping)

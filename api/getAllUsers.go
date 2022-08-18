@@ -25,6 +25,7 @@ func AllUsers() map[uint64]interface{} {
 			"lastName":  user.LastName,
 			"email":     user.Email,
 			"role":      user.Role,
+			"status":    user.Status,
 		}
 	}
 	return m
